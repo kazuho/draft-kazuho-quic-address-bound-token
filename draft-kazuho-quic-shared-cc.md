@@ -137,4 +137,8 @@ TBD
 
 # Acknowledgements
 
-TBD
+A similar proposal can be found at <https://svs.informatik.uni-hamburg.de/publications/2019/2019-03-22-Sy-preprint-Surfing-the-Web-quicker-than-QUIC-via-a-shared-Address-Validation.pdf>
+that proposes a transport parameter for changes the scope of token to a list of
+server names, and uses token to skip address validation.  This proposal is
+different from that in two aspects: the scope of the token is the server's
+address, and it is used for consolidating the congestion controller as well.
