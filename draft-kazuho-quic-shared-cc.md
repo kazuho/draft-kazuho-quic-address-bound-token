@@ -58,7 +58,6 @@ informative:
 
 This document explains a method of sharing address validation and congestion
 control logic when multiple connections are established between two endpoints.
-tamper-proof.
 
 --- middle
 
