@@ -19,6 +19,7 @@ author:
     email: kazuhooku@gmail.com
 
 normative:
+  RFC2119:
   QUIC-TRANSPORT:
     title: "QUIC: A UDP-Based Multiplexed and Secure Transport"
     seriesinfo:
@@ -35,24 +36,9 @@ normative:
         name: Martin Thomson
         org: Mozilla
         role: editor
-  QUIC-TLS:
-    title: "Using Transport Layer Security (TLS) to Secure QUIC"
-    seriesinfo:
-      Internet-Draft: draft-ietf-quic-tls-16
-    date: 2018-10-23
-    author:
-      -
-        ins: M. Thomson
-        name: Martin Thomson
-        org: Mozilla
-        role: editor
-      -
-        ins: S. Turner
-        name: Sean Turner
-        org: sn3rd
-        role: editor
 
 informative:
+  RFC8446:
 
 --- abstract
 
@@ -68,9 +54,9 @@ establishment latency.  It has reduced the latency to one round-trip time for
 the most common case, or to zero when 0-RTT resumption is being used. However,
 the endpoints are still restricted to slow start when the connection is
 established.  Also, the server is not allowed to send more than three times of
-data until it validates the address of the peer.  Note that TLS [TLS] requires
-connection for each server name to be established independently even if the
-servers resolve to the same address.
+data until it validates the address of the peer.  Note that TLS [RFC8446]
+requires connection for each server name to be established independently even if
+the servers resolve to the same address.
 
 This document defines a QUIC Transport Parameter that changes the scope of the
 token sent using a NEW_TOKEN frame from the server identity to the server's
