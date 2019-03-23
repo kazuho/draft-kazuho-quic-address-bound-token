@@ -73,7 +73,7 @@ Table of Contents
      6.1.  Normative References  . . . . . . . . . . . . . . . . . .   4
      6.2.  Informative References  . . . . . . . . . . . . . . . . .   4
    Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .   4
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   4
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   5
 
 1.  Introduction
 
@@ -103,8 +103,8 @@ Table of Contents
 
    The unbound_token Transport Parameter (0xTBD) indicates the client
    that the tokens provided by NEW_TOKEN frames can be used for future
-   connections that go to the same server address rather than that to
-   the same server name.
+   connections that go to the same server address tuple rather than that
+   to the same server name.
 
 
 
@@ -121,6 +121,12 @@ Internet-Draft    Shared Congestion Controller for QUIC       March 2019
    the identifier of the congestion controller in the token so that it
    can consolidate newly established connections using that token to the
    existing congestion controller.
+
+   Clients SHOULD retain provided tokens with the original server
+   address tuple of the connections being the keys rather than those
+   advertised as servers' preferred addresses, so that the associated
+   unbound token can be found for subsequent connections even if the
+   preceding connections migrate to a different address.
 
 3.  Sharing the Congestion Controller
 
@@ -155,12 +161,6 @@ Internet-Draft    Shared Congestion Controller for QUIC       March 2019
    connection is different from the address for which the unbound token
    was issued.
 
-   A server associates an Initial packet to an existing connection using
-   the Destination Connection ID, QUIC version, and the five tuple.  If
-   all of the values match to that of an existing connection, the packet
-   is processed accordingly.  Otherwise, a server MUST handle the packet
-   as potentially creating a new connection.
-
 
 
 
@@ -169,6 +169,12 @@ Oku                    Expires September 24, 2019               [Page 3]
 
 Internet-Draft    Shared Congestion Controller for QUIC       March 2019
 
+
+   A server associates an Initial packet to an existing connection using
+   the Destination Connection ID, QUIC version, and the five tuple.  If
+   all of the values match to that of an existing connection, the packet
+   is processed accordingly.  Otherwise, a server MUST handle the packet
+   as potentially creating a new connection.
 
 4.2.  Plaintext Tokens
 
@@ -213,12 +219,6 @@ Appendix A.  Acknowledgements
    token is the server's address, and it is used for consolidating the
    congestion controller as well.
 
-Author's Address
-
-
-
-
-
 
 
 Oku                    Expires September 24, 2019               [Page 4]
@@ -226,12 +226,12 @@ Oku                    Expires September 24, 2019               [Page 4]
 Internet-Draft    Shared Congestion Controller for QUIC       March 2019
 
 
+Author's Address
+
    Kazuho Oku
    Fastly
 
    Email: kazuhooku@gmail.com
-
-
 
 
 
