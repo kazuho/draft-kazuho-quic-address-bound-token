@@ -58,7 +58,7 @@ data until it validates the address of the peer.  Note that TLS [RFC8446]
 requires connection for each server name to be established independently even if
 the servers resolve to the same address.
 
-This document defines a QUIC Transport Parameter that changes the scope of the
+This document defines a QUIC transport parameter that changes the scope of the
 token sent using a NEW_TOKEN frame from the server identity to the server's
 address, so that the server can use the information carried in the token to
 consolidate the congestion control state among the connections going to the
@@ -72,17 +72,18 @@ interpreted as described in [RFC2119].
 
 # The unbound_token Transport Parameter
 
-The unbound_token Transport Parameter (0xTBD) indicates the client that the
+The unbound_token transport parameter (0xTBD) indicates the client that the
 tokens provided by NEW_TOKEN frames can be used for future connections that go
 to the same server address tuple rather than that to the same server name.
 
-The transport parameter does not carry a value; the length of the value field
-MUST be set to zero.
+The unbound_token transport parameter does not carry a value; the length of the
+value MUST be empty.  Only the server sends the unbound_token transport
+parameter.  When an endpoint observes a peer not obeying to these rules, it
+MUST terminate the connection with a PROTOCOL_VIOLATION error..
 
-Only the server sends the Transport Parameter.  A server can include the
-identifier of the congestion controller in the token so that it can consolidate
-newly established connections using that token to the existing congestion
-controller.
+A server can include the identifier of the congestion controller in the token so
+that it can consolidate newly established connections using that token to the
+existing congestion controller.
 
 Clients SHOULD retain provided tokens with the original server address tuple of
 the connections being the keys rather than those advertised as servers'
