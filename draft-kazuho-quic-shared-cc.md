@@ -105,12 +105,28 @@ Unbound token also provides increased chance of skipping address validation
 during connection establishment, when multitudes of server names are hosted by a
 single server.
 
-## Prioritization
+# Cross-connection Prioritization
 
-TODO: define a frame that carries the "priority" of the connection.  The range
-of the priority would be between 1 and 256.  The frame encourages the receiver
-to assign bandwidth proportional to the suggested priority value for each
-connection.
+The PRIORITY frame (0xTBD) indicates the priority of the connection within
+the connections associated to the same consolidated congestion controller.
+
+The PRIORITY frames is as follows:
+
+~~~
+ 0
+ 0 1 2 3 4 5 6 7
++-+-+-+-+-+-+-+-+
+|  Priority (8) |
++-+-+-+-+-+-+-+-+
+~~~
+
+The Priority field carries the priority of the connection, subtracted by one.
+
+Each connection is assigned a priority value between 1 and 256.  The initial
+priority is 16.
+
+The PRIORITY frame is sent by an endpoint to encourage the receiver to assign
+bandwidth proportional to the suggested priority value for each connection.
 
 # Security Considerations
 
@@ -146,7 +162,10 @@ TBD
 # Acknowledgements
 
 A similar proposal can be found at <https://svs.informatik.uni-hamburg.de/publications/2019/2019-03-22-Sy-preprint-Surfing-the-Web-quicker-than-QUIC-via-a-shared-Address-Validation.pdf>
-that proposes a transport parameter for changes the scope of token to a list of
-server names, and uses token to skip address validation.  This proposal is
-different from that in two aspects: the scope of the token is the server's
-address, and it is used for consolidating the congestion controller as well.
+that advocates for a transport parameter for changes the scope of token to a
+list of server names, and uses token to skip address validation.  This proposal
+is different from that in three aspects:
+
+* The scope of the token is the server's IP address.
+* The token is used also for consolidating the congestion controller.
+* Cross-connection prioritization is defined.
