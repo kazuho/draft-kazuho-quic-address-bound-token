@@ -74,7 +74,7 @@ interpreted as described in [RFC2119].
 
 The unbound_token Transport Parameter (0xTBD) indicates the client that the
 tokens provided by NEW_TOKEN frames can be used for future connections that go
-to the same server address rather than that to the same server name.
+to the same server address tuple rather than that to the same server name.
 
 The transport parameter does not carry a value; the length of the value field
 MUST be set to zero.
@@ -83,6 +83,13 @@ Only the server sends the Transport Parameter.  A server can include the
 identifier of the congestion controller in the token so that it can consolidate
 newly established connections using that token to the existing congestion
 controller.
+
+Clients SHOULD retain provided tokens with the original server address tuple of
+the connections being the keys rather than those advertised as servers'
+preferred addresses, so that the associated unbound token can be found for
+subsequent connections even if the preceding connections migrate to a different
+address.
+
 
 # Sharing the Congestion Controller
 
