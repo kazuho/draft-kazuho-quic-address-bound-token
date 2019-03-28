@@ -54,9 +54,9 @@ informative:
 
 --- abstract
 
-This document describes a QUIC extention for sharing address validation and
-congestion control logic when multiple connections are established between the
-same two endpoints.
+This document describes a QUIC extension for sharing address validation and
+congestion control logic among multiple connections established between the same
+two endpoints.
 
 --- middle
 
