@@ -389,14 +389,14 @@ ul.toc li {
   <li>It is impossible to control the distribution of bandwidth among the set of the connections, even when some connections require preferential treatment than others (e.g., video streaming vs. file download).</li>
 </ul>
 <p id="rfc.section.1.p.3">Tokens sent by NEW_TOKEN frames mitigate the first two concerns to some extent, though the effectiveness depends on the probability of clients reestablishing the connections using the same server name and application protocol.</p>
-<p id="rfc.section.1.p.4">To resolve these isssues, this document defines a QUIC frame that carries a token that is valid for the server&#8217;s address tuple, rather than the server&#8217;s name and the selected application protocol.</p>
+<p id="rfc.section.1.p.4">To resolve these issues, this document defines a QUIC frame that carries a token that is valid for the server&#8217;s address tuple, rather than the server&#8217;s name and the selected application protocol.</p>
 <p id="rfc.section.1.p.5">A server includes the identifier of the congestion controller in the token it offers, and when the client establishes another connection to the same server address tuple using the provided token, binds the newly established connection to the already existing congestion controller identified by the token.  By doing so, the server skips address validation and slow-start phase for the newly established connection.</p>
 <p id="rfc.section.1.p.6">Furthermore, the PRIORITY frame can be used to communicate the precedence between  the connections that share the same congestion controller.  As an example, a client might specify highest priority for a connection that carries live video streams, while specifying normal priority for a HTTP/3 <a href="#QUIC-HTTP">[QUIC-HTTP]</a> connection.</p>
 <p id="rfc.section.1.p.7">Even when there is no existing connection, sharing the tokens between different server names and application protocols raises the chance of the server receiving a fresh token, thereby improving the odds of skipping address validation and reusing the information of the path carried by the token.</p>
 <h1 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a> <a href="#notational-conventions" id="notational-conventions">Notational Conventions</a></h1>
 <p id="rfc.section.1.1.p.1">The key words &#8220;MUST&#8221;, &#8220;MUST NOT&#8221;, &#8220;REQUIRED&#8221;, &#8220;SHALL&#8221;, &#8220;SHALL NOT&#8221;, &#8220;SHOULD&#8221;, &#8220;SHOULD NOT&#8221;, &#8220;RECOMMENDED&#8221;, &#8220;MAY&#8221;, and &#8220;OPTIONAL&#8221; in this document are to be interpreted as described in <a href="#RFC2119">[RFC2119]</a>.</p>
 <h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> <a href="#the-sharedcc-transport-parameter" id="the-sharedcc-transport-parameter">The shared_cc Transport Parameter</a></h1>
-<p id="rfc.section.2.p.1">An endpoint send the <samp>shared_cc</samp> transport parameter (0xTBD) to indicate the peer that the sender is capable of processing the frames introduced by this specification.</p>
+<p id="rfc.section.2.p.1">An endpoint sends the <samp>shared_cc</samp> transport parameter (0xTBD) to indicate the peer that the sender is capable of processing the frames introduced by this specification.</p>
 <p id="rfc.section.2.p.2">The transport parameter does not carry a value; the length of the value MUST be set to zero.  A receiver MUST terminate the connection with a PROTOCOL_VIOLATION error when it receives the <samp>shared_cc</samp> transport parameter with a non-empty value.</p>
 <h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a> <a href="#the-newunboundtoken-frame" id="the-newunboundtoken-frame">The NEW_UNBOUND_TOKEN frame</a></h1>
 <p id="rfc.section.3.p.1">A server sends a NEW_UNBOUND_TOKEN frame (type=0xTBD) to provide the client with a token to be used for a future connection.</p>
@@ -404,7 +404,7 @@ ul.toc li {
 <p id="rfc.section.3.p.3">The only difference between a token carried by the NEW_TOKEN frame and the one carried by the NEW_UNBOUND_TOKEN is the scope of the token.  The scope of the token carried by the NEW_UNBOUND_TOKEN frame is the original server address tuple of the connection even when the server offers a server&#8217;s preferred address.</p>
 <h1 id="rfc.section.4"><a href="#rfc.section.4">4.</a> <a href="#the-priority-frame" id="the-priority-frame">The PRIORITY frame</a></h1>
 <p id="rfc.section.4.p.1">The PRIORITY frame (type=0xTBD) indicates the precedence of the connection within the connections associated to the same consolidated congestion controller.</p>
-<p id="rfc.section.4.p.2">The PRIORITY frames is as follows:</p>
+<p id="rfc.section.4.p.2">The PRIORITY frame is as follows:</p>
 <pre>
  0
  0 1 2 3 4 5 6 7
@@ -415,7 +415,7 @@ ul.toc li {
 <p id="rfc.section.4.p.3">The Priority field carries the priority of the connection, subtracted by one.</p>
 <p id="rfc.section.4.p.4">Each connection is assigned a priority value between 1 and 256.  The initial priority is 16.</p>
 <p id="rfc.section.4.p.5">The PRIORITY frame is sent by an endpoint to encourage the receiver to assign bandwidth proportional to the suggested priority value for each connection.</p>
-<p id="rfc.section.4.p.6">The priority value carried by the PRIORITY frame is unidirectional.  A client advertises it&#8217;s preference on how the data sent by the server should be prioritized; a server advertises it&#8217;s preference on how the data sent by the client should be prioritized.</p>
+<p id="rfc.section.4.p.6">The priority value carried by the PRIORITY frame is unidirectional.  A client advertises its preference on how the data sent by the server should be prioritized; a server advertises its preference on how the data sent by the client should be prioritized.</p>
 <h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> <a href="#sharing-the-congestion-controller" id="sharing-the-congestion-controller">Sharing the Congestion Controller</a></h1>
 <p id="rfc.section.5.p.1">When multiple QUIC connections are associated to a single congestion controller, how the send window is distributed between the connections is up to the sender&#8217;s discretion, even though the peer can indicate it&#8217;s preference by using the PRIORITY frame.</p>
 <p id="rfc.section.5.p.2">However, acknowledgements MUST be sent out at the same moments as when the congestion controller is not consolidated.  The loss recovery logic SHOULD operate independently for each connection, while forwarding receipts of acknowledgements and loss signals to the consolidated congestion controller.</p>
@@ -474,7 +474,7 @@ ul.toc li {
 
 <ul>
   <li>The scope of the token is the server&#8217;s address tuple.</li>
-  <li>The token is carried by a new frame, so that a server can send a token identified by the name and one identified by hte server&#8217;s address tuple within each connection.</li>
+  <li>The token is carried by a new frame, so that a server can send a token identified by the name and another identified by the server&#8217;s address tuple within each connection.</li>
   <li>The token is used also for consolidating the congestion controller.</li>
   <li>Cross-connection prioritization is defined.</li>
 </ul>

@@ -102,7 +102,7 @@ Table of Contents
    clients reestablishing the connections using the same server name and
    application protocol.
 
-   To resolve these isssues, this document defines a QUIC frame that
+   To resolve these issues, this document defines a QUIC frame that
    carries a token that is valid for the server's address tuple, rather
    than the server's name and the selected application protocol.
 
@@ -142,7 +142,7 @@ Internet-Draft    Shared Congestion Controller for QUIC       March 2019
 
 2.  The shared_cc Transport Parameter
 
-   An endpoint send the "shared_cc" transport parameter (0xTBD) to
+   An endpoint sends the "shared_cc" transport parameter (0xTBD) to
    indicate the peer that the sender is capable of processing the frames
    introduced by this specification.
 
@@ -179,7 +179,7 @@ Internet-Draft    Shared Congestion Controller for QUIC       March 2019
    connection within the connections associated to the same consolidated
    congestion controller.
 
-   The PRIORITY frames is as follows:
+   The PRIORITY frame is as follows:
 
     0
     0 1 2 3 4 5 6 7
@@ -198,9 +198,9 @@ Internet-Draft    Shared Congestion Controller for QUIC       March 2019
    each connection.
 
    The priority value carried by the PRIORITY frame is unidirectional.
-   A client advertises it's preference on how the data sent by the
-   server should be prioritized; a server advertises it's preference on
-   how the data sent by the client should be prioritized.
+   A client advertises its preference on how the data sent by the server
+   should be prioritized; a server advertises its preference on how the
+   data sent by the client should be prioritized.
 
 5.  Sharing the Congestion Controller
 
@@ -310,8 +310,8 @@ Appendix A.  Acknowledgements
    o  The scope of the token is the server's address tuple.
 
    o  The token is carried by a new frame, so that a server can send a
-      token identified by the name and one identified by hte server's
-      address tuple within each connection.
+      token identified by the name and another identified by the
+      server's address tuple within each connection.
 
    o  The token is used also for consolidating the congestion
       controller.
