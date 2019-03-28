@@ -79,9 +79,9 @@ Tokens sent by NEW_TOKEN frames mitigate the first two concerns to some extent,
 though the effectiveness depends on the probability of clients reestablishing
 the connections using the same server name and application protocol.
 
-To resolve these isssues, this document defines a QUIC frame that carries a
-token that is valid for the server's address tuple, rather than the server's
-name and the selected application protocol.
+To resolve these issues, this document defines a QUIC frame that carries a token
+that is valid for the server's address tuple, rather than the server's name and
+the selected application protocol.
 
 A server includes the identifier of the congestion controller in the token it
 offers, and when the client establishes another connection to the same server
@@ -109,7 +109,7 @@ interpreted as described in [RFC2119].
 
 # The shared_cc Transport Parameter
 
-An endpoint send the `shared_cc` transport parameter (0xTBD) to indicate the
+An endpoint sends the `shared_cc` transport parameter (0xTBD) to indicate the
 peer that the sender is capable of processing the frames introduced by this
 specification.
 
@@ -138,7 +138,7 @@ The PRIORITY frame (type=0xTBD) indicates the precedence of the connection
 within the connections associated to the same consolidated congestion
 controller.
 
-The PRIORITY frames is as follows:
+The PRIORITY frame is as follows:
 
 ~~~
  0
@@ -157,8 +157,8 @@ The PRIORITY frame is sent by an endpoint to encourage the receiver to assign
 bandwidth proportional to the suggested priority value for each connection.
 
 The priority value carried by the PRIORITY frame is unidirectional.  A client
-advertises it's preference on how the data sent by the server should be
-prioritized; a server advertises it's preference on how the data sent by the
+advertises its preference on how the data sent by the server should be
+prioritized; a server advertises its preference on how the data sent by the
 client should be prioritized.
 
 # Sharing the Congestion Controller
@@ -213,7 +213,7 @@ aspects:
 
 * The scope of the token is the server's address tuple.
 * The token is carried by a new frame, so that a server can send a token
-  identified by the name and one identified by hte server's address tuple within
-  each connection.
+  identified by the name and another identified by the server's address tuple
+  within each connection.
 * The token is used also for consolidating the congestion controller.
 * Cross-connection prioritization is defined.
