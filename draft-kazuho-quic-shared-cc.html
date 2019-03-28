@@ -283,16 +283,17 @@ ul.toc li {
   <link href="#rfc.toc" rel="Contents"/>
 <link href="#rfc.section.1" rel="Chapter" title="1 Introduction"/>
 <link href="#rfc.section.1.1" rel="Chapter" title="1.1 Notational Conventions"/>
-<link href="#rfc.section.2" rel="Chapter" title="2 The unbound_token Transport Parameter"/>
-<link href="#rfc.section.3" rel="Chapter" title="3 Sharing the Congestion Controller"/>
-<link href="#rfc.section.4" rel="Chapter" title="4 Cross-connection Prioritization"/>
-<link href="#rfc.section.5" rel="Chapter" title="5 Security Considerations"/>
-<link href="#rfc.section.5.1" rel="Chapter" title="5.1 Reflection Attack"/>
-<link href="#rfc.section.5.2" rel="Chapter" title="5.2 Plaintext Tokens"/>
-<link href="#rfc.section.6" rel="Chapter" title="6 IANA Considerations"/>
-<link href="#rfc.references" rel="Chapter" title="7 References"/>
-<link href="#rfc.references.1" rel="Chapter" title="7.1 Normative References"/>
-<link href="#rfc.references.2" rel="Chapter" title="7.2 Informative References"/>
+<link href="#rfc.section.2" rel="Chapter" title="2 The shared_cc Transport Parameter"/>
+<link href="#rfc.section.3" rel="Chapter" title="3 The NEW_UNBOUND_TOKEN frame"/>
+<link href="#rfc.section.4" rel="Chapter" title="4 The PRIORITY frame"/>
+<link href="#rfc.section.5" rel="Chapter" title="5 Sharing the Congestion Controller"/>
+<link href="#rfc.section.6" rel="Chapter" title="6 Security Considerations"/>
+<link href="#rfc.section.6.1" rel="Chapter" title="6.1 Reflection Attack"/>
+<link href="#rfc.section.6.2" rel="Chapter" title="6.2 Plaintext Tokens"/>
+<link href="#rfc.section.7" rel="Chapter" title="7 IANA Considerations"/>
+<link href="#rfc.references" rel="Chapter" title="8 References"/>
+<link href="#rfc.references.1" rel="Chapter" title="8.1 Normative References"/>
+<link href="#rfc.references.2" rel="Chapter" title="8.2 Informative References"/>
 <link href="#rfc.appendix.A" rel="Chapter" title="A Acknowledgements"/>
 <link href="#rfc.authors" rel="Chapter"/>
 
@@ -302,9 +303,9 @@ ul.toc li {
 
   <meta name="dct.creator" content="Oku, K." />
   <meta name="dct.identifier" content="urn:ietf:id:draft-kazuho-quic-shared-cc-latest" />
-  <meta name="dct.issued" scheme="ISO8601" content="2019-3-23" />
-  <meta name="dct.abstract" content="This document explains a method of sharing address validation and congestion control logic when multiple connections are established between two endpoints." />
-  <meta name="description" content="This document explains a method of sharing address validation and congestion control logic when multiple connections are established between two endpoints." />
+  <meta name="dct.issued" scheme="ISO8601" content="2019-3-28" />
+  <meta name="dct.abstract" content="This document describes a QUIC extention for sharing address validation and congestion control logic when multiple connections are established between the same two endpoints." />
+  <meta name="description" content="This document describes a QUIC extention for sharing address validation and congestion control logic when multiple connections are established between the same two endpoints." />
 
 </head>
 
@@ -323,10 +324,10 @@ ul.toc li {
 </tr>
 <tr>
   <td class="left">Intended status: Standards Track</td>
-  <td class="right">March 23, 2019</td>
+  <td class="right">March 28, 2019</td>
 </tr>
 <tr>
-  <td class="left">Expires: September 24, 2019</td>
+  <td class="left">Expires: September 29, 2019</td>
   <td class="right"></td>
 </tr>
 
@@ -340,14 +341,14 @@ ul.toc li {
   <h1 id="rfc.abstract">
   <a href="#rfc.abstract">Abstract</a>
 </h1>
-<p>This document explains a method of sharing address validation and congestion control logic when multiple connections are established between two endpoints.</p>
+<p>This document describes a QUIC extention for sharing address validation and congestion control logic when multiple connections are established between the same two endpoints.</p>
 <h1 id="rfc.status">
   <a href="#rfc.status">Status of This Memo</a>
 </h1>
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on September 24, 2019.</p>
+<p>This Internet-Draft will expire on September 29, 2019.</p>
 <h1 id="rfc.copyrightnotice">
   <a href="#rfc.copyrightnotice">Copyright Notice</a>
 </h1>
@@ -361,16 +362,17 @@ ul.toc li {
 
   	<li>1.   <a href="#rfc.section.1">Introduction</a></li>
 <ul><li>1.1.   <a href="#rfc.section.1.1">Notational Conventions</a></li>
-</ul><li>2.   <a href="#rfc.section.2">The unbound_token Transport Parameter</a></li>
-<li>3.   <a href="#rfc.section.3">Sharing the Congestion Controller</a></li>
-<li>4.   <a href="#rfc.section.4">Cross-connection Prioritization</a></li>
-<li>5.   <a href="#rfc.section.5">Security Considerations</a></li>
-<ul><li>5.1.   <a href="#rfc.section.5.1">Reflection Attack</a></li>
-<li>5.2.   <a href="#rfc.section.5.2">Plaintext Tokens</a></li>
-</ul><li>6.   <a href="#rfc.section.6">IANA Considerations</a></li>
-<li>7.   <a href="#rfc.references">References</a></li>
-<ul><li>7.1.   <a href="#rfc.references.1">Normative References</a></li>
-<li>7.2.   <a href="#rfc.references.2">Informative References</a></li>
+</ul><li>2.   <a href="#rfc.section.2">The shared_cc Transport Parameter</a></li>
+<li>3.   <a href="#rfc.section.3">The NEW_UNBOUND_TOKEN frame</a></li>
+<li>4.   <a href="#rfc.section.4">The PRIORITY frame</a></li>
+<li>5.   <a href="#rfc.section.5">Sharing the Congestion Controller</a></li>
+<li>6.   <a href="#rfc.section.6">Security Considerations</a></li>
+<ul><li>6.1.   <a href="#rfc.section.6.1">Reflection Attack</a></li>
+<li>6.2.   <a href="#rfc.section.6.2">Plaintext Tokens</a></li>
+</ul><li>7.   <a href="#rfc.section.7">IANA Considerations</a></li>
+<li>8.   <a href="#rfc.references">References</a></li>
+<ul><li>8.1.   <a href="#rfc.references.1">Normative References</a></li>
+<li>8.2.   <a href="#rfc.references.2">Informative References</a></li>
 </ul><li>Appendix A.   <a href="#rfc.appendix.A">Acknowledgements</a></li>
 <li><a href="#rfc.authors">Author's Address</a></li>
 
@@ -378,20 +380,30 @@ ul.toc li {
   </ul>
 
   <h1 id="rfc.section.1"><a href="#rfc.section.1">1.</a> <a href="#introduction" id="introduction">Introduction</a></h1>
-<p id="rfc.section.1.p.1">One of the goals of QUIC <a href="#QUIC-TRANSPORT">[QUIC-TRANSPORT]</a> is to reduce the connection establishment latency.  It has reduced the latency to one round-trip time for the most common case, or to zero when 0-RTT resumption is being used. However, the endpoints are still restricted to slow start when the connection is established.  Also, the server is not allowed to send more than three times of data until it validates the address of the peer.  Note that TLS <a href="#RFC8446">[RFC8446]</a> requires connection for each server name to be established independently even if the servers resolve to the same address.</p>
-<p id="rfc.section.1.p.2">This document defines a QUIC transport parameter that changes the scope of the token sent using a NEW_TOKEN frame from the server identity to the server&#8217;s address, so that the server can use the information carried in the token to consolidate the congestion control state among the connections going to the same client.</p>
+<p id="rfc.section.1.p.1">QUIC <a href="#QUIC-TRANSPORT">[QUIC-TRANSPORT]</a> requires clients to establish different connections when either the name of the server or the application protocol specified using ALPN <a href="#RFC7301">[RFC7301]</a> is different, even when the connections are established against the same server.  This restriction introduces several drawbacks:</p>
+<p/>
+
+<ul>
+  <li>Address validation is required for each connection establishment, thereby restricting the amount of data that the server can send to the client.</li>
+  <li>Each connection would go through the slow-start phase, limiting the amount of data that can be exchanged during the early stages of each connection.</li>
+  <li>It is impossible to control the distribution of bandwidth among the set of the connections, even when some connections require preferential treatment than others (e.g., video streaming vs. file download).</li>
+</ul>
+<p id="rfc.section.1.p.3">Tokens sent by NEW_TOKEN frames mitigate the first two concerns to some extent, though the effectiveness depends on the probability of clients reestablishing the connections using the same server name and application protocol.</p>
+<p id="rfc.section.1.p.4">To resolve these isssues, this document defines a QUIC frame that carries a token that is valid for the server&#8217;s address tuple, rather than the server&#8217;s name and the selected application protocol.</p>
+<p id="rfc.section.1.p.5">A server includes the identifier of the congestion controller in the token it offers, and when the client establishes another connection to the same server address tuple using the provided token, binds the newly established connection to the already existing congestion controller identified by the token.  By doing so, the server skips address validation and slow-start phase for the newly established connection.</p>
+<p id="rfc.section.1.p.6">Furthermore, the PRIORITY frame can be used to communicate the precedence between  the connections that share the same congestion controller.  As an example, a client might specify highest priority for a connection that carries live video streams, while specifying normal priority for a HTTP/3 <a href="#QUIC-HTTP">[QUIC-HTTP]</a> connection.</p>
+<p id="rfc.section.1.p.7">Even when there is no existing connection, sharing the tokens between different server names and application protocols raises the chance of the server receiving a fresh token, thereby improving the odds of skipping address validation and reusing the information of the path carried by the token.</p>
 <h1 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a> <a href="#notational-conventions" id="notational-conventions">Notational Conventions</a></h1>
 <p id="rfc.section.1.1.p.1">The key words &#8220;MUST&#8221;, &#8220;MUST NOT&#8221;, &#8220;REQUIRED&#8221;, &#8220;SHALL&#8221;, &#8220;SHALL NOT&#8221;, &#8220;SHOULD&#8221;, &#8220;SHOULD NOT&#8221;, &#8220;RECOMMENDED&#8221;, &#8220;MAY&#8221;, and &#8220;OPTIONAL&#8221; in this document are to be interpreted as described in <a href="#RFC2119">[RFC2119]</a>.</p>
-<h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> <a href="#the-unboundtoken-transport-parameter" id="the-unboundtoken-transport-parameter">The unbound_token Transport Parameter</a></h1>
-<p id="rfc.section.2.p.1">The unbound_token transport parameter (0xTBD) indicates the client that the tokens provided by NEW_TOKEN frames can be used for future connections that go to the same server address tuple rather than that to the same server name.</p>
-<p id="rfc.section.2.p.2">The unbound_token transport parameter does not carry a value; the length of the value MUST be empty.  Only the server sends the unbound_token transport parameter.  When an endpoint observes a peer not obeying to these rules, it MUST terminate the connection with a PROTOCOL_VIOLATION error..</p>
-<p id="rfc.section.2.p.3">A server can include the identifier of the congestion controller in the token so that it can consolidate newly established connections using that token to the existing congestion controller.</p>
-<p id="rfc.section.2.p.4">Clients SHOULD retain provided tokens with the original server address tuple of the connections being the keys rather than those advertised as servers&#8217; preferred addresses, so that the associated unbound token can be found for subsequent connections even if the preceding connections migrate to a different address.</p>
-<h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a> <a href="#sharing-the-congestion-controller" id="sharing-the-congestion-controller">Sharing the Congestion Controller</a></h1>
-<p id="rfc.section.3.p.1">When a consolidated congestion controller is being used, an endpoint can distribute the congestion window between the connections in any way.  However, acknowledgements MUST be sent out at the same moments as when the congestion controller is not consolidated.  The loss recovery logic SHOULD operate independently for each connection, but forward receipts of acknowledgements and loss signals to the consolidated congestion controller.</p>
-<p id="rfc.section.3.p.2">Unbound token also provides increased chance of skipping address validation during connection establishment, when multitudes of server names are hosted by a single server.</p>
-<h1 id="rfc.section.4"><a href="#rfc.section.4">4.</a> <a href="#cross-connection-prioritization" id="cross-connection-prioritization">Cross-connection Prioritization</a></h1>
-<p id="rfc.section.4.p.1">The PRIORITY frame (0xTBD) indicates the priority of the connection within the connections associated to the same consolidated congestion controller.</p>
+<h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> <a href="#the-sharedcc-transport-parameter" id="the-sharedcc-transport-parameter">The shared_cc Transport Parameter</a></h1>
+<p id="rfc.section.2.p.1">An endpoint send the <samp>shared_cc</samp> transport parameter (0xTBD) to indicate the peer that the sender is capable of processing the frames introduced by this specification.</p>
+<p id="rfc.section.2.p.2">The transport parameter does not carry a value; the length of the value MUST be set to zero.  A receiver MUST terminate the connection with a PROTOCOL_VIOLATION error when it receives the <samp>shared_cc</samp> transport parameter with a non-empty value.</p>
+<h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a> <a href="#the-newunboundtoken-frame" id="the-newunboundtoken-frame">The NEW_UNBOUND_TOKEN frame</a></h1>
+<p id="rfc.section.3.p.1">A server sends a NEW_UNBOUND_TOKEN frame (type=0xTBD) to provide the client with a token to be used for a future connection.</p>
+<p id="rfc.section.3.p.2">The format of the NEW_UNBOUND_TOKEN is equivalent to that of the NEW_TOKEN frame.</p>
+<p id="rfc.section.3.p.3">The only difference between a token carried by the NEW_TOKEN frame and the one carried by the NEW_UNBOUND_TOKEN is the scope of the token.  The scope of the token carried by the NEW_UNBOUND_TOKEN frame is the original server address tuple of the connection even when the server offers a server&#8217;s preferred address.</p>
+<h1 id="rfc.section.4"><a href="#rfc.section.4">4.</a> <a href="#the-priority-frame" id="the-priority-frame">The PRIORITY frame</a></h1>
+<p id="rfc.section.4.p.1">The PRIORITY frame (type=0xTBD) indicates the precedence of the connection within the connections associated to the same consolidated congestion controller.</p>
 <p id="rfc.section.4.p.2">The PRIORITY frames is as follows:</p>
 <pre>
  0
@@ -403,16 +415,20 @@ ul.toc li {
 <p id="rfc.section.4.p.3">The Priority field carries the priority of the connection, subtracted by one.</p>
 <p id="rfc.section.4.p.4">Each connection is assigned a priority value between 1 and 256.  The initial priority is 16.</p>
 <p id="rfc.section.4.p.5">The PRIORITY frame is sent by an endpoint to encourage the receiver to assign bandwidth proportional to the suggested priority value for each connection.</p>
-<h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a></h1>
-<h1 id="rfc.section.5.1"><a href="#rfc.section.5.1">5.1.</a> <a href="#reflection-attack" id="reflection-attack">Reflection Attack</a></h1>
-<p id="rfc.section.5.1.p.1">An attacker can create a connection to obtain an unbound token, then initiate a new connection by using the token with a spoofed client address, thereby skipping address validation.  The impact of the attack is equivalent to spoofed NAT rebinding.  A server SHOULD NOT skip path validation if the source IP address of an initiating connection is different from the address for which the unbound token was issued.</p>
-<p id="rfc.section.5.1.p.2">A server associates an Initial packet to an existing connection using the Destination Connection ID, QUIC version, and the five tuple.  If all of the values match to that of an existing connection, the packet is processed accordingly.  Otherwise, a server MUST handle the packet as potentially creating a new connection.</p>
-<h1 id="rfc.section.5.2"><a href="#rfc.section.5.2">5.2.</a> <a href="#plaintext-tokens" id="plaintext-tokens">Plaintext Tokens</a></h1>
-<p id="rfc.section.5.2.p.1">A server MUST NOT issue an unbound token that includes the name of the original server or the identifier of the congestion controller in cleartext, because if visible on the wire, observers can use that information to correlate the ongoing connection establishment and the properties of the connection that previously existed.</p>
-<h1 id="rfc.section.6"><a href="#rfc.section.6">6.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a></h1>
-<p id="rfc.section.6.p.1">TBD</p>
-<h1 id="rfc.references"><a href="#rfc.references">7.</a> References</h1>
-<h1 id="rfc.references.1"><a href="#rfc.references.1">7.1.</a> Normative References</h1>
+<p id="rfc.section.4.p.6">The priority value carried by the PRIORITY frame is unidirectional.  A client advertises it&#8217;s preference on how the data sent by the server should be prioritized; a server advertises it&#8217;s preference on how the data sent by the client should be prioritized.</p>
+<h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> <a href="#sharing-the-congestion-controller" id="sharing-the-congestion-controller">Sharing the Congestion Controller</a></h1>
+<p id="rfc.section.5.p.1">When multiple QUIC connections are associated to a single congestion controller, how the send window is distributed between the connections is up to the sender&#8217;s discretion, even though the peer can indicate it&#8217;s preference by using the PRIORITY frame.</p>
+<p id="rfc.section.5.p.2">However, acknowledgements MUST be sent out at the same moments as when the congestion controller is not consolidated.  The loss recovery logic SHOULD operate independently for each connection, while forwarding receipts of acknowledgements and loss signals to the consolidated congestion controller.</p>
+<h1 id="rfc.section.6"><a href="#rfc.section.6">6.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a></h1>
+<h1 id="rfc.section.6.1"><a href="#rfc.section.6.1">6.1.</a> <a href="#reflection-attack" id="reflection-attack">Reflection Attack</a></h1>
+<p id="rfc.section.6.1.p.1">An attacker can create a connection to obtain an unbound token, then initiate a new connection by using the token with a spoofed client address, thereby skipping address validation.  The impact of the attack is equivalent to spoofed NAT rebinding.  A server SHOULD NOT skip path validation if the source IP address of an initiating connection is different from the address for which the unbound token was issued.</p>
+<p id="rfc.section.6.1.p.2">A server associates an Initial packet to an existing connection using the Destination Connection ID, QUIC version, and the five tuple.  If all of the values match to that of an existing connection, the packet is processed accordingly.  Otherwise, a server MUST handle the packet as potentially creating a new connection.</p>
+<h1 id="rfc.section.6.2"><a href="#rfc.section.6.2">6.2.</a> <a href="#plaintext-tokens" id="plaintext-tokens">Plaintext Tokens</a></h1>
+<p id="rfc.section.6.2.p.1">A server MUST NOT issue an unbound token that includes the name of the original server or the identifier of the congestion controller in cleartext, because if visible on the wire, observers can use that information to correlate the ongoing connection establishment and the properties of the connection that previously existed.</p>
+<h1 id="rfc.section.7"><a href="#rfc.section.7">7.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a></h1>
+<p id="rfc.section.7.p.1">TBD</p>
+<h1 id="rfc.references"><a href="#rfc.references">8.</a> References</h1>
+<h1 id="rfc.references.1"><a href="#rfc.references.1">8.1.</a> Normative References</h1>
 <table>
   <tbody>
     <tr>
@@ -429,9 +445,21 @@ ul.toc li {
     </tr>
   </tbody>
 </table>
-<h1 id="rfc.references.2"><a href="#rfc.references.2">7.2.</a> Informative References</h1>
+<h1 id="rfc.references.2"><a href="#rfc.references.2">8.2.</a> Informative References</h1>
 <table>
   <tbody>
+    <tr>
+      <td class="reference">
+        <b id="QUIC-HTTP">[QUIC-HTTP]</b>
+      </td>
+      <td class="top"><a title="Akamai">Bishop, M.</a>, "<a href="http://tools.ietf.org/html/draft-ietf-quic-http-16">Hypertext Transfer Protocol Version 3 (HTTP/3)</a>", Internet-Draft draft-ietf-quic-http-16, October 2018.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC7301">[RFC7301]</b>
+      </td>
+      <td class="top"><a>Friedl, S.</a>, <a>Popov, A.</a>, <a>Langley, A.</a> and <a>E. Stephan</a>, "<a href="http://tools.ietf.org/html/rfc7301">Transport Layer Security (TLS) Application-Layer Protocol Negotiation Extension</a>", RFC 7301, DOI 10.17487/RFC7301, July 2014.</td>
+    </tr>
     <tr>
       <td class="reference">
         <b id="RFC8446">[RFC8446]</b>
@@ -441,11 +469,12 @@ ul.toc li {
   </tbody>
 </table>
 <h1 id="rfc.appendix.A"><a href="#rfc.appendix.A">Appendix A.</a> <a href="#acknowledgements" id="acknowledgements">Acknowledgements</a></h1>
-<p id="rfc.section.A.p.1">A similar proposal can be found at <a href="https://svs.informatik.uni-hamburg.de/publications/2019/2019-03-22-Sy-preprint-Surfing-the-Web-quicker-than-QUIC-via-a-shared-Address-Validation.pdf">https://svs.informatik.uni-hamburg.de/publications/2019/2019-03-22-Sy-preprint-Surfing-the-Web-quicker-than-QUIC-via-a-shared-Address-Validation.pdf</a> that advocates for a transport parameter for changes the scope of token to a list of server names, and uses token to skip address validation.  This proposal is different from that in three aspects:</p>
+<p id="rfc.section.A.p.1">A proposal exists that advocates for having a transport parameter to change the scope of a token to a list of server names: <a href="https://svs.informatik.uni-hamburg.de/publications/2019/2019-03-22-Sy-preprint-Surfing-the-Web-quicker-than-QUIC-via-a-shared-Address-Validation.pdf">https://svs.informatik.uni-hamburg.de/publications/2019/2019-03-22-Sy-preprint-Surfing-the-Web-quicker-than-QUIC-via-a-shared-Address-Validation.pdf</a>.  The approach described in this document is different from that is the following aspects:</p>
 <p/>
 
 <ul>
-  <li>The scope of the token is the server&#8217;s IP address.</li>
+  <li>The scope of the token is the server&#8217;s address tuple.</li>
+  <li>The token is carried by a new frame, so that a server can send a token identified by the name and one identified by hte server&#8217;s address tuple within each connection.</li>
   <li>The token is used also for consolidating the congestion controller.</li>
   <li>Cross-connection prioritization is defined.</li>
 </ul>
