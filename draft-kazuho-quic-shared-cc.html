@@ -293,7 +293,7 @@ ul.toc li {
 <link href="#rfc.references.1" rel="Chapter" title="6.1 Normative References"/>
 <link href="#rfc.references.2" rel="Chapter" title="6.2 Informative References"/>
 <link href="#rfc.appendix.A" rel="Chapter" title="A Design Variations"/>
-<link href="#rfc.appendix.A.1" rel="Chapter" title="A.1 Using Alt-Svc Name as a Key"/>
+<link href="#rfc.appendix.A.1" rel="Chapter" title="A.1 Using Alt-Svc Name as the Key"/>
 <link href="#rfc.appendix.A.2" rel="Chapter" title="A.2 Cross-connection Prioritization"/>
 <link href="#rfc.appendix.B" rel="Chapter" title="B Acknowledgements"/>
 <link href="#rfc.authors" rel="Chapter"/>
@@ -305,8 +305,8 @@ ul.toc li {
   <meta name="dct.creator" content="Oku, K." />
   <meta name="dct.identifier" content="urn:ietf:id:draft-kazuho-quic-shared-cc-latest" />
   <meta name="dct.issued" scheme="ISO8601" content="2019-3-29" />
-  <meta name="dct.abstract" content="This document describes a QUIC extension for sharing address validation and congestion control logic among multiple connections established between the same two endpoints." />
-  <meta name="description" content="This document describes a QUIC extension for sharing address validation and congestion control logic among multiple connections established between the same two endpoints." />
+  <meta name="dct.abstract" content="This document describes a QUIC extension for sharing address validation and congestion controller state among multiple connections established between the same two endpoints." />
+  <meta name="description" content="This document describes a QUIC extension for sharing address validation and congestion controller state among multiple connections established between the same two endpoints." />
 
 </head>
 
@@ -342,7 +342,7 @@ ul.toc li {
   <h1 id="rfc.abstract">
   <a href="#rfc.abstract">Abstract</a>
 </h1>
-<p>This document describes a QUIC extension for sharing address validation and congestion control logic among multiple connections established between the same two endpoints.</p>
+<p>This document describes a QUIC extension for sharing address validation and congestion controller state among multiple connections established between the same two endpoints.</p>
 <h1 id="rfc.status">
   <a href="#rfc.status">Status of This Memo</a>
 </h1>
@@ -373,7 +373,7 @@ ul.toc li {
 <ul><li>6.1.   <a href="#rfc.references.1">Normative References</a></li>
 <li>6.2.   <a href="#rfc.references.2">Informative References</a></li>
 </ul><li>Appendix A.   <a href="#rfc.appendix.A">Design Variations</a></li>
-<ul><li>A.1.   <a href="#rfc.appendix.A.1">Using Alt-Svc Name as a Key</a></li>
+<ul><li>A.1.   <a href="#rfc.appendix.A.1">Using Alt-Svc Name as the Key</a></li>
 <li>A.2.   <a href="#rfc.appendix.A.2">Cross-connection Prioritization</a></li>
 </ul><li>Appendix B.   <a href="#rfc.appendix.B">Acknowledgements</a></li>
 <li><a href="#rfc.authors">Author's Address</a></li>
@@ -382,7 +382,7 @@ ul.toc li {
   </ul>
 
   <h1 id="rfc.section.1"><a href="#rfc.section.1">1.</a> <a href="#introduction" id="introduction">Introduction</a></h1>
-<p id="rfc.section.1.p.1">Some if not all of the application protocols that are built on top of QUIC <a href="#QUIC-TRANSPORT">[QUIC-TRANSPORT]</a>, including HTTP/3 <a href="#QUIC-HTTP">[QUIC-HTTP]</a>, require or would require clients to establish different connections for each server name, even when those names are hosted by the same server.  This restriction introduces several drawbacks:</p>
+<p id="rfc.section.1.p.1">Some if not all of the application protocols that are built on top of QUIC <a href="#QUIC-TRANSPORT">[QUIC-TRANSPORT]</a>, including HTTP/3 <a href="#QUIC-HTTP">[QUIC-HTTP]</a>, require or would require clients to establish different connections for each server name, even when those server names are hosted by the same server.  This restriction introduces several drawbacks:</p>
 <p/>
 
 <ul>
@@ -391,13 +391,13 @@ ul.toc li {
   <li>It is hard if not impossible to control the distribution of the bandwidth among the connections.</li>
 </ul>
 <p id="rfc.section.1.p.3">Tokens sent using NEW_TOKEN frames mitigate the first two concerns to some extent, though the effectiveness depends on the probability of clients reestablishing the connections using the same server name.</p>
-<p id="rfc.section.1.p.4">To resolve these issues, this document defines a QUIC transport parameter that expands the scope of the token from the name of the server to an union of the name and the server&#8217;s address tuple.</p>
-<p id="rfc.section.1.p.5">When sending a token, a server would embed an identifier of the congestion controller associated to the connection.  Then, when it accepts a new connection using the advertised token, associates the new connection to the existing congestion controller by using the identifier found in the provided token.  Once the server succeeds in associating the new connection to the existing congestion controller, it can skip address validation, slow-start phase, and use the congestion controller for distributing bandwidth between both the old and the new connecion.</p>
-<p id="rfc.section.1.p.6">Even when there is no existing connection, sharing the tokens between different server names raises the chance of the server receiving a token that has not yet expired, thereby improving the odds of skipping address validation and reusing the information of the path, such as the estimated round-trip time and the bandwidth.</p>
+<p id="rfc.section.1.p.4">To resolve these issues, this document defines a QUIC transport parameter that expands the scope of the token from the server name to a union of the server name and the server&#8217;s address tuple.</p>
+<p id="rfc.section.1.p.5">When sending a token, a server would embed an identifier of the congestion controller associated to the connection.  Then, when accepting a new connection using the advertised token, the server associates the new connection to the existing congestion controller by using the identifier found in the provided token.  Once the server succeeds in associating the new connection to the existing congestion controller, it can skip address validation and slow-start phase for the new connection, as well as using the congestion controller for distributing bandwidth between the old and the new connection.</p>
+<p id="rfc.section.1.p.6">Even when there is no existing connection, sharing the tokens between different server names raises the chance of the server receiving a token that has not yet expired, thereby improving the odds of skipping address validation and reusing the information of the path, such as the estimated round-trip time or the bandwidth.</p>
 <h1 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a> <a href="#notational-conventions" id="notational-conventions">Notational Conventions</a></h1>
 <p id="rfc.section.1.1.p.1">The key words &#8220;MUST&#8221;, &#8220;MUST NOT&#8221;, &#8220;REQUIRED&#8221;, &#8220;SHALL&#8221;, &#8220;SHALL NOT&#8221;, &#8220;SHOULD&#8221;, &#8220;SHOULD NOT&#8221;, &#8220;RECOMMENDED&#8221;, &#8220;MAY&#8221;, and &#8220;OPTIONAL&#8221; in this document are to be interpreted as described in <a href="#RFC2119">[RFC2119]</a>.</p>
 <h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> <a href="#the-addressboundtoken-transport-parameter" id="the-addressboundtoken-transport-parameter">The address_bound_token Transport Parameter</a></h1>
-<p id="rfc.section.2.p.1">A server sends the <samp>address_bound_token</samp> transport parameter (0xTBD) to indicate the client that the token it would send using the NEW_TOKEN frame can be used for future connections established against the same server name, or for those sharing the same server IP address and port.</p>
+<p id="rfc.section.2.p.1">A server sends the <samp>address_bound_token</samp> transport parameter (0xTBD) to indicate the client that the token it would send using the NEW_TOKEN frame can be used for future connections established against the same server name, or for those sharing the same server IP address and port number.</p>
 <p id="rfc.section.2.p.2">Only the server sends the <samp>address_bound_token</samp> transport parameter.  The transport parameter does not carry a value; the length of the value MUST be set to zero.  An endpoint that receives the transport parameter not conforming to these requirements MUST terminate the connection with a PROTOCOL_VIOLATION error.</p>
 <h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a> <a href="#sharing-the-congestion-controller" id="sharing-the-congestion-controller">Sharing the Congestion Controller</a></h1>
 <p id="rfc.section.3.p.1">When multiple QUIC connections are associated to a single congestion controller, how the send window is distributed between the connections is up to the sender&#8217;s discretion.</p>
@@ -446,13 +446,13 @@ ul.toc li {
   </tbody>
 </table>
 <h1 id="rfc.appendix.A"><a href="#rfc.appendix.A">Appendix A.</a> <a href="#design-variations" id="design-variations">Design Variations</a></h1>
-<h1 id="rfc.appendix.A.1"><a href="#rfc.appendix.A.1">A.1.</a> <a href="#using-alt-svc-name-as-a-key" id="using-alt-svc-name-as-a-key">Using Alt-Svc Name as a Key</a></h1>
+<h1 id="rfc.appendix.A.1"><a href="#rfc.appendix.A.1">A.1.</a> <a href="#using-alt-svc-name-as-the-key" id="using-alt-svc-name-as-the-key">Using Alt-Svc Name as the Key</a></h1>
 <p id="rfc.section.A.1.p.1">An alternative approach to using the server&#8217;s address tuple as the scope of the token is to use the <samp>host</samp> value of the Alt-Svc <a href="#RFC7838">[RFC7838]</a> header field as the scope.</p>
-<p id="rfc.section.A.1.p.2">In such an approach, a server would send the host value for all the origins it hosts.  Then, a client using the value of the host as the key would be able to send a token received by any of the connections that went to the server on any of the future connections that goes to the server.</p>
+<p id="rfc.section.A.1.p.2">In such an approach, a server would send one host value for all the origins it hosts.  Then, a client using the value of the host as the scope of the tokens would be able to send a token received on any of the connections that went to the server on any of the future connections that goes to the server.</p>
 <p id="rfc.section.A.1.p.3">The downside of the approach is that the design works only for HTTP/3 connections being upgraded by the Alt-Svc header field.</p>
 <h1 id="rfc.appendix.A.2"><a href="#rfc.appendix.A.2">A.2.</a> <a href="#cross-connection-prioritization" id="cross-connection-prioritization">Cross-connection Prioritization</a></h1>
-<p id="rfc.section.A.2.p.1">A natural extension to the proposed scheme would be to define a way of prioritizing the connections, so that some connections can be given higher precedence than others.  As an example, it would be sensible to prioritize a connection carrying realtime video stream above a connection that is transferring an update image of an operating system.</p>
-<p id="rfc.section.A.2.p.2">A simple way of priortizing between the connections would be to associate a priority value to every connection that would be respected by the sender when it distributes the bandwidth among the connections.</p>
+<p id="rfc.section.A.2.p.1">A natural extension to the proposed scheme would be to define a way of prioritizing the connections, so that some connections can be given higher precedence than others.  As an example, it would be sensible to prioritize a connection carrying real-time video stream above a connection that is transferring an update image of an operating system.</p>
+<p id="rfc.section.A.2.p.2">A simple way of prioritizing between the connections would be to associate a priority value to every connection that would be respected by the sender when it distributes the bandwidth among the connections.</p>
 <p id="rfc.section.A.2.p.3">The PRIORITY frame (type=0xTBD) indicates the priority.</p>
 <pre>
  0
@@ -466,14 +466,12 @@ ul.toc li {
 <p id="rfc.section.A.2.p.6">The PRIORITY frame is sent by an endpoint to encourage the receiver to assign bandwidth proportional to the suggested priority value for each connection.</p>
 <p id="rfc.section.A.2.p.7">The priority value carried by the PRIORITY frame is unidirectional.  A client advertises its preference on how the data sent by the server should be prioritized; a server advertises its preference on how the data sent by the client should be prioritized.</p>
 <h1 id="rfc.appendix.B"><a href="#rfc.appendix.B">Appendix B.</a> <a href="#acknowledgements" id="acknowledgements">Acknowledgements</a></h1>
-<p id="rfc.section.B.p.1">A proposal exists that advocates for having a transport parameter to change the scope of a token to a list of server names: <a href="https://svs.informatik.uni-hamburg.de/publications/2019/2019-03-22-Sy-preprint-Surfing-the-Web-quicker-than-QUIC-via-a-shared-Address-Validation.pdf">https://svs.informatik.uni-hamburg.de/publications/2019/2019-03-22-Sy-preprint-Surfing-the-Web-quicker-than-QUIC-via-a-shared-Address-Validation.pdf</a>.  The approach described in this document is different from that is the following aspects:</p>
+<p id="rfc.section.B.p.1">A proposal exists that advocates for having a transport parameter to change the scope of a token to a list of server names: <a href="https://svs.informatik.uni-hamburg.de/publications/2019/2019-03-22-Sy-preprint-Surfing-the-Web-quicker-than-QUIC-via-a-shared-Address-Validation.pdf">https://svs.informatik.uni-hamburg.de/publications/2019/2019-03-22-Sy-preprint-Surfing-the-Web-quicker-than-QUIC-via-a-shared-Address-Validation.pdf</a>.  The approach described in this document is different from that in the following aspects:</p>
 <p/>
 
 <ul>
-  <li>The scope of the token is the server&#8217;s address tuple.</li>
-  <li>The token is carried by a new frame, so that a server can send a token identified by the name and another identified by the server&#8217;s address tuple within each connection.</li>
+  <li>The scope of the token is the union of the server name and the server&#8217;s address tuple.</li>
   <li>The token is used also for consolidating the congestion controller.</li>
-  <li>Cross-connection prioritization is defined.</li>
 </ul>
 <h1 id="rfc.authors">
   <a href="#rfc.authors">Author's Address</a>
