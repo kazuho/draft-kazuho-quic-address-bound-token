@@ -226,11 +226,6 @@ Oku                    Expires September 30, 2019               [Page 4]
 Internet-Draft    Shared Congestion Controller for QUIC       March 2019
 
 
-   [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
-              Protocol (HTTP/1.1): Message Syntax and Routing",
-              RFC 7230, DOI 10.17487/RFC7230, June 2014,
-              <https://www.rfc-editor.org/info/rfc7230>.
-
    [RFC7838]  Nottingham, M., McManus, P., and J. Reschke, "HTTP
               Alternative Services", RFC 7838, DOI 10.17487/RFC7838,
               April 2016, <https://www.rfc-editor.org/info/rfc7838>.
@@ -249,8 +244,8 @@ A.1.  Using Alt-Svc Name as a Key
    that went to the server on any of the future connections that goes to
    the server.
 
-   The downside of the approach is that the design is specific to HTTP
-   [RFC7230].
+   The downside of the approach is that the design works only for HTTP/3
+   connections being upgraded by the Alt-Svc header field.
 
 A.2.  Cross-connection Prioritization
 
@@ -274,6 +269,11 @@ A.2.  Cross-connection Prioritization
    |  Priority (8) |
    +-+-+-+-+-+-+-+-+
 
+   The Priority field carries the priority of the connection, subtracted
+   by one.
+
+   Each connection is assigned a priority value between 1 and 256.  The
+   initial priority is 16.
 
 
 
@@ -281,12 +281,6 @@ Oku                    Expires September 30, 2019               [Page 5]
 
 Internet-Draft    Shared Congestion Controller for QUIC       March 2019
 
-
-   The Priority field carries the priority of the connection, subtracted
-   by one.
-
-   Each connection is assigned a priority value between 1 and 256.  The
-   initial priority is 16.
 
    The PRIORITY frame is sent by an endpoint to encourage the receiver
    to assign bandwidth proportional to the suggested priority value for
@@ -323,6 +317,12 @@ Author's Address
    Fastly
 
    Email: kazuhooku@gmail.com
+
+
+
+
+
+
 
 
 

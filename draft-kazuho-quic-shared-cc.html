@@ -439,12 +439,6 @@ ul.toc li {
     </tr>
     <tr>
       <td class="reference">
-        <b id="RFC7230">[RFC7230]</b>
-      </td>
-      <td class="top"><a>Fielding, R.</a> and <a>J. Reschke</a>, "<a href="http://tools.ietf.org/html/rfc7230">Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</a>", RFC 7230, DOI 10.17487/RFC7230, June 2014.</td>
-    </tr>
-    <tr>
-      <td class="reference">
         <b id="RFC7838">[RFC7838]</b>
       </td>
       <td class="top"><a>Nottingham, M.</a>, <a>McManus, P.</a> and <a>J. Reschke</a>, "<a href="http://tools.ietf.org/html/rfc7838">HTTP Alternative Services</a>", RFC 7838, DOI 10.17487/RFC7838, April 2016.</td>
@@ -455,7 +449,7 @@ ul.toc li {
 <h1 id="rfc.appendix.A.1"><a href="#rfc.appendix.A.1">A.1.</a> <a href="#using-alt-svc-name-as-a-key" id="using-alt-svc-name-as-a-key">Using Alt-Svc Name as a Key</a></h1>
 <p id="rfc.section.A.1.p.1">An alternative approach to using the server&#8217;s address tuple as the scope of the token is to use the <samp>host</samp> value of the Alt-Svc <a href="#RFC7838">[RFC7838]</a> header field as the scope.</p>
 <p id="rfc.section.A.1.p.2">In such an approach, a server would send the host value for all the origins it hosts.  Then, a client using the value of the host as the key would be able to send a token received by any of the connections that went to the server on any of the future connections that goes to the server.</p>
-<p id="rfc.section.A.1.p.3">The downside of the approach is that the design is specific to HTTP <a href="#RFC7230">[RFC7230]</a>.</p>
+<p id="rfc.section.A.1.p.3">The downside of the approach is that the design works only for HTTP/3 connections being upgraded by the Alt-Svc header field.</p>
 <h1 id="rfc.appendix.A.2"><a href="#rfc.appendix.A.2">A.2.</a> <a href="#cross-connection-prioritization" id="cross-connection-prioritization">Cross-connection Prioritization</a></h1>
 <p id="rfc.section.A.2.p.1">A natural extension to the proposed scheme would be to define a way of prioritizing the connections, so that some connections can be given higher precedence than others.  As an example, it would be sensible to prioritize a connection carrying realtime video stream above a connection that is transferring an update image of an operating system.</p>
 <p id="rfc.section.A.2.p.2">A simple way of priortizing between the connections would be to associate a priority value to every connection that would be respected by the sender when it distributes the bandwidth among the connections.</p>
