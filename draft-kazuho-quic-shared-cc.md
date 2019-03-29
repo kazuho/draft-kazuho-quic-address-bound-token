@@ -54,8 +54,8 @@ informative:
 --- abstract
 
 This document describes a QUIC extension for sharing address validation and
-congestion control logic among multiple connections established between the same
-two endpoints.
+congestion controller state among multiple connections established between the
+same two endpoints.
 
 --- middle
 
@@ -64,7 +64,7 @@ two endpoints.
 Some if not all of the application protocols that are built on top of QUIC
 [QUIC-TRANSPORT], including HTTP/3 [QUIC-HTTP], require or would require
 clients to establish different connections for each server name, even when those
-names are hosted by the same server.  This restriction introduces several
+server names are hosted by the same server.  This restriction introduces several
 drawbacks:
 
 * Address validation is required for each connection establishment, thereby
@@ -79,22 +79,22 @@ extent, though the effectiveness depends on the probability of clients
 reestablishing the connections using the same server name.
 
 To resolve these issues, this document defines a QUIC transport parameter that
-expands the scope of the token from the name of the server to an union of the
+expands the scope of the token from the server name to a union of the server
 name and the server's address tuple.
 
 When sending a token, a server would embed an identifier of the congestion
-controller associated to the connection.  Then, when it accepts a new connection
-using the advertised token, associates the new connection to the existing
-congestion controller by using the identifier found in the provided token.  Once
-the server succeeds in associating the new connection to the existing congestion
-controller, it can skip address validation, slow-start phase, and use the
-congestion controller for distributing bandwidth between both the old and the
-new connecion.
+controller associated to the connection.  Then, when accepting a new connection
+using the advertised token, the server associates the new connection to the
+existing congestion controller by using the identifier found in the provided
+token.  Once the server succeeds in associating the new connection to the
+existing congestion controller, it can skip address validation and slow-start
+phase for the new connection, as well as using the congestion controller for
+distributing bandwidth between the old and the new connection.
 
 Even when there is no existing connection, sharing the tokens between different
 server names raises the chance of the server receiving a token that has not yet
 expired, thereby improving the odds of skipping address validation and reusing
-the information of the path, such as the estimated round-trip time and the
+the information of the path, such as the estimated round-trip time or the
 bandwidth.
 
 ## Notational Conventions
@@ -108,7 +108,7 @@ interpreted as described in [RFC2119].
 A server sends the `address_bound_token` transport parameter (0xTBD) to
 indicate the client that the token it would send using the NEW_TOKEN frame can
 be used for future connections established against the same server name, or for
-those sharing the same server IP address and port.
+those sharing the same server IP address and port number.
 
 Only the server sends the `address_bound_token` transport parameter.  The
 transport parameter does not carry a value; the length of the value MUST be set
@@ -158,16 +158,16 @@ TBD
 
 # Design Variations
 
-## Using Alt-Svc Name as a Key
+## Using Alt-Svc Name as the Key
 
 An alternative approach to using the server's address tuple as the scope of the
 token is to use the `host` value of the Alt-Svc [RFC7838] header field as the
 scope.
 
-In such an approach, a server would send the host value for all the origins it
-hosts.  Then, a client using the value of the host as the key would be able to
-send a token received by any of the connections that went to the server on any
-of the future connections that goes to the server.
+In such an approach, a server would send one host value for all the origins it
+hosts.  Then, a client using the value of the host as the scope of the tokens
+ would be able to send a token received on any of the connections that went to
+the server on any of the future connections that goes to the server.
 
 The downside of the approach is that the design works only for HTTP/3
 connections being upgraded by the Alt-Svc header field.
@@ -177,10 +177,10 @@ connections being upgraded by the Alt-Svc header field.
 A natural extension to the proposed scheme would be to define a way of
 prioritizing the connections, so that some connections can be given higher
 precedence than others.  As an example, it would be sensible to prioritize a
-connection carrying realtime video stream above a connection that is
+connection carrying real-time video stream above a connection that is
 transferring an update image of an operating system.
 
-A simple way of priortizing between the connections would be to associate a
+A simple way of prioritizing between the connections would be to associate a
 priority value to every connection that would be respected by the sender when
 it distributes the bandwidth among the connections.
 
@@ -211,12 +211,9 @@ client should be prioritized.
 
 A proposal exists that advocates for having a transport parameter to change the
 scope of a token to a list of server names: <https://svs.informatik.uni-hamburg.de/publications/2019/2019-03-22-Sy-preprint-Surfing-the-Web-quicker-than-QUIC-via-a-shared-Address-Validation.pdf>.
-The approach described in this document is different from that is the following
+The approach described in this document is different from that in the following
 aspects:
 
-* The scope of the token is the server's address tuple.
-* The token is carried by a new frame, so that a server can send a token
-  identified by the name and another identified by the server's address tuple
-  within each connection.
+* The scope of the token is the union of the server name and the server's
+  address tuple.
 * The token is used also for consolidating the congestion controller.
-* Cross-connection prioritization is defined.
