@@ -38,7 +38,6 @@ normative:
         role: editor
 
 informative:
-  RFC7230:
   RFC7838:
   QUIC-HTTP:
     title: "Hypertext Transfer Protocol Version 3 (HTTP/3)"
@@ -170,7 +169,8 @@ hosts.  Then, a client using the value of the host as the key would be able to
 send a token received by any of the connections that went to the server on any
 of the future connections that goes to the server.
 
-The downside of the approach is that the design is specific to HTTP [RFC7230].
+The downside of the approach is that the design works only for HTTP/3
+connections being upgraded by the Alt-Svc header field.
 
 ## Cross-connection Prioritization
 
