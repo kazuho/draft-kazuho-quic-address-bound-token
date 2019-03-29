@@ -38,8 +38,8 @@ normative:
         role: editor
 
 informative:
-  RFC7301:
-  RFC8446:
+  RFC7230:
+  RFC7838:
   QUIC-HTTP:
     title: "Hypertext Transfer Protocol Version 3 (HTTP/3)"
     date: 2018-10-23
@@ -62,44 +62,41 @@ two endpoints.
 
 # Introduction
 
-QUIC [QUIC-TRANSPORT] requires clients to establish different connections when
-either the name of the server or the application protocol specified using ALPN
-[RFC7301] is different, even when the connections are established against the
-same server.  This restriction introduces several drawbacks:
+Some if not all of the application protocols that are built on top of QUIC
+[QUIC-TRANSPORT], including HTTP/3 [QUIC-HTTP], require or would require
+clients to establish different connections for each server name, even when those
+names are hosted by the same server.  This restriction introduces several
+drawbacks:
 
 * Address validation is required for each connection establishment, thereby
-  restricting the amount of data that the server can send to the client.
+  restricting the amount of data that a server can initially send.
 * Each connection would go through the slow-start phase, limiting the amount of
-  data that can be exchanged during the early stages of each connection.
-* It is impossible to control the distribution of bandwidth among the set of the
-  connections, even when some connections require preferential treatment than
-  others (e.g., video streaming vs. file download).
+  data that can be sent by a server during the early stages of each connection.
+* It is hard if not impossible to control the distribution of the bandwidth
+  among the connections.
 
-Tokens sent by NEW_TOKEN frames mitigate the first two concerns to some extent,
-though the effectiveness depends on the probability of clients reestablishing
-the connections using the same server name and application protocol.
+Tokens sent using NEW_TOKEN frames mitigate the first two concerns to some
+extent, though the effectiveness depends on the probability of clients
+reestablishing the connections using the same server name.
 
-To resolve these issues, this document defines a QUIC frame that carries a token
-that is valid for the server's address tuple, rather than the server's name and
-the selected application protocol.
+To resolve these issues, this document defines a QUIC transport parameter that
+expands the scope of the token from the name of the server to an union of the
+name and the server's address tuple.
 
-A server includes the identifier of the congestion controller in the token it
-offers, and when the client establishes another connection to the same server
-address tuple using the provided token, binds the newly established connection
-to the already existing congestion controller identified by the token.  By doing
-so, the server skips address validation and slow-start phase for the newly
-established connection.
-
-Furthermore, the PRIORITY frame can be used to communicate the precedence
-between  the connections that share the same congestion controller.  As an
-example, a client might specify highest priority for a connection that carries
-live video streams, while specifying normal priority for a HTTP/3 [QUIC-HTTP]
-connection.
+When sending a token, a server would embed an identifier of the congestion
+controller associated to the connection.  Then, when it accepts a new connection
+using the advertised token, associates the new connection to the existing
+congestion controller by using the identifier found in the provided token.  Once
+the server succeeds in associating the new connection to the existing congestion
+controller, it can skip address validation, slow-start phase, and use the
+congestion controller for distributing bandwidth between both the old and the
+new connecion.
 
 Even when there is no existing connection, sharing the tokens between different
-server names and application protocols raises the chance of the server receiving
-a fresh token, thereby improving the odds of skipping address validation and
-reusing the information of the path carried by the token.
+server names raises the chance of the server receiving a token that has not yet
+expired, thereby improving the odds of skipping address validation and reusing
+the information of the path, such as the estimated round-trip time and the
+bandwidth.
 
 ## Notational Conventions
 
@@ -107,38 +104,87 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in [RFC2119].
 
-# The shared_cc Transport Parameter
+# The address_bound_token Transport Parameter
 
-An endpoint sends the `shared_cc` transport parameter (0xTBD) to indicate the
-peer that the sender is capable of processing the frames introduced by this
-specification.
+A server sends the `address_bound_token` transport parameter (0xTBD) to
+indicate the client that the token it would send using the NEW_TOKEN frame can
+be used for future connections established against the same server name, or for
+those sharing the same server IP address and port.
 
-The transport parameter does not carry a value; the length of the value MUST be
-set to zero.  A receiver MUST terminate the connection with a PROTOCOL_VIOLATION
-error when it receives the `shared_cc` transport parameter with a non-empty
-value.
+Only the server sends the `address_bound_token` transport parameter.  The
+transport parameter does not carry a value; the length of the value MUST be set
+to zero.  An endpoint that receives the transport parameter not conforming to
+these requirements MUST terminate the connection with a PROTOCOL_VIOLATION
+error.
 
-# The NEW_UNBOUND_TOKEN frame
+# Sharing the Congestion Controller
 
-A server sends a NEW_UNBOUND_TOKEN frame (type=0xTBD) to provide the client with
-a token to be used for a future connection.
+When multiple QUIC connections are associated to a single congestion controller,
+how the send window is distributed between the connections is up to the sender's
+discretion.
 
-The format of the NEW_UNBOUND_TOKEN is equivalent to that of the NEW_TOKEN
-frame.
+However, acknowledgements MUST be sent out no later than as when the congestion
+controller is not consolidated.  The loss recovery logic SHOULD operate
+independently for each connection, while forwarding receipts of acknowledgements
+and loss signals to the consolidated congestion controller.
 
-The only difference between a token carried by the NEW_TOKEN frame and the one
-carried by the NEW_UNBOUND_TOKEN is the scope of the token.  The scope of the
-token carried by the NEW_UNBOUND_TOKEN frame is the original server address
-tuple of the connection even when the server offers a server's preferred
-address.
+# Security Considerations
 
-# The PRIORITY frame
+## Reflection Attack
 
-The PRIORITY frame (type=0xTBD) indicates the precedence of the connection
-within the connections associated to the same consolidated congestion
-controller.
+An attacker can create a connection to obtain an address-bound token, warm up
+the connection, then initiate a new connection by using the token with a
+spoofed client address or port number.  If the server skips address validation
+and retains the congestion window as-is, the spoofed address might receive a
+fair amount of packet.
 
-The PRIORITY frame is as follows:
+The impact of the attack is equivalent to the spoofed NAT rebinding attack.  A
+server SHOULD NOT skip path validation if the source IP address of an initiating
+connection is different from the address for which the address-bound token was
+issued.
+
+## Plaintext Tokens
+
+A server MUST NOT issue an unbound token that includes the name of the original
+server or the identifier of the congestion controller in cleartext, because if
+visible on the wire, observers can use that information to correlate the ongoing
+connection establishment and the properties of the connection that previously
+existed.
+
+# IANA Considerations
+
+TBD
+
+--- back
+
+# Design Variations
+
+## Using Alt-Svc Name as a Key
+
+An alternative approach to using the server's address tuple as the scope of the
+token is to use the `host` value of the Alt-Svc [RFC7838] header field as the
+scope.
+
+In such an approach, a server would send the host value for all the origins it
+hosts.  Then, a client using the value of the host as the key would be able to
+send a token received by any of the connections that went to the server on any
+of the future connections that goes to the server.
+
+The downside of the approach is that the design is specific to HTTP [RFC7230].
+
+## Cross-connection Prioritization
+
+A natural extension to the proposed scheme would be to define a way of
+prioritizing the connections, so that some connections can be given higher
+precedence than others.  As an example, it would be sensible to prioritize a
+connection carrying realtime video stream above a connection that is
+transferring an update image of an operating system.
+
+A simple way of priortizing between the connections would be to associate a
+priority value to every connection that would be respected by the sender when
+it distributes the bandwidth among the connections.
+
+The PRIORITY frame (type=0xTBD) indicates the priority.
 
 ~~~
  0
@@ -160,49 +206,6 @@ The priority value carried by the PRIORITY frame is unidirectional.  A client
 advertises its preference on how the data sent by the server should be
 prioritized; a server advertises its preference on how the data sent by the
 client should be prioritized.
-
-# Sharing the Congestion Controller
-
-When multiple QUIC connections are associated to a single congestion controller,
-how the send window is distributed between the connections is up to the sender's
-discretion, even though the peer can indicate it's preference by using the
-PRIORITY frame.
-
-However, acknowledgements MUST be sent out at the same moments as when the
-congestion controller is not consolidated.  The loss recovery logic SHOULD
-operate independently for each connection, while forwarding receipts of
-acknowledgements and loss signals to the consolidated congestion controller.
-
-# Security Considerations
-
-## Reflection Attack
-
-An attacker can create a connection to obtain an unbound token, then initiate a
-new connection by using the token with a spoofed client address, thereby
-skipping address validation.  The impact of the attack is equivalent to spoofed
-NAT rebinding.  A server SHOULD NOT skip path validation if the source IP
-address of an initiating connection is different from the address for which the
-unbound token was issued.
-
-A server associates an Initial packet to an existing connection using the
-Destination Connection ID, QUIC version, and the five tuple.  If all of the
-values match to that of an existing connection, the packet is processed
-accordingly.  Otherwise, a server MUST handle the packet as potentially
-creating a new connection.
-
-## Plaintext Tokens
-
-A server MUST NOT issue an unbound token that includes the name of the original
-server or the identifier of the congestion controller in cleartext, because if
-visible on the wire, observers can use that information to correlate the ongoing
-connection establishment and the properties of the connection that previously
-existed.
-
-# IANA Considerations
-
-TBD
-
---- back
 
 # Acknowledgements
 
