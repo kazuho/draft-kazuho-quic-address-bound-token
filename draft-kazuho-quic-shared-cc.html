@@ -304,7 +304,7 @@ ul.toc li {
 
   <meta name="dct.creator" content="Oku, K." />
   <meta name="dct.identifier" content="urn:ietf:id:draft-kazuho-quic-shared-cc-latest" />
-  <meta name="dct.issued" scheme="ISO8601" content="2019-3-29" />
+  <meta name="dct.issued" scheme="ISO8601" content="2019-4-01" />
   <meta name="dct.abstract" content="This document describes a QUIC extension for sharing address validation and congestion controller state among multiple connections established between the same two endpoints." />
   <meta name="description" content="This document describes a QUIC extension for sharing address validation and congestion controller state among multiple connections established between the same two endpoints." />
 
@@ -325,10 +325,10 @@ ul.toc li {
 </tr>
 <tr>
   <td class="left">Intended status: Standards Track</td>
-  <td class="right">March 29, 2019</td>
+  <td class="right">April 01, 2019</td>
 </tr>
 <tr>
-  <td class="left">Expires: September 30, 2019</td>
+  <td class="left">Expires: October 3, 2019</td>
   <td class="right"></td>
 </tr>
 
@@ -349,7 +349,7 @@ ul.toc li {
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on September 30, 2019.</p>
+<p>This Internet-Draft will expire on October 3, 2019.</p>
 <h1 id="rfc.copyrightnotice">
   <a href="#rfc.copyrightnotice">Copyright Notice</a>
 </h1>
@@ -386,14 +386,13 @@ ul.toc li {
 <p/>
 
 <ul>
-  <li>Address validation is required for each connection establishment, thereby restricting the amount of data that a server can initially send.</li>
+  <li>Address validation is required for each connection establishment specifying a different server name, thereby restricting the amount of data that a server can initially send.</li>
   <li>Each connection would go through the slow-start phase, limiting the amount of data that can be sent by a server during the early stages of each connection.</li>
   <li>It is hard if not impossible to control the distribution of the bandwidth among the connections.</li>
 </ul>
-<p id="rfc.section.1.p.3">Tokens sent using NEW_TOKEN frames mitigate the first two concerns to some extent, though the effectiveness depends on the probability of clients reestablishing the connections using the same server name.</p>
-<p id="rfc.section.1.p.4">To resolve these issues, this document defines a QUIC transport parameter that expands the scope of the token from the server name to a union of the server name and the server&#8217;s address tuple.</p>
-<p id="rfc.section.1.p.5">When sending a token, a server would embed an identifier of the congestion controller associated to the connection.  Then, when accepting a new connection using the advertised token, the server associates the new connection to the existing congestion controller by using the identifier found in the provided token.  Once the server succeeds in associating the new connection to the existing congestion controller, it can skip address validation and slow-start phase for the new connection, as well as using the congestion controller for distributing bandwidth between the old and the new connection.</p>
-<p id="rfc.section.1.p.6">Even when there is no existing connection, sharing the tokens between different server names raises the chance of the server receiving a token that has not yet expired, thereby improving the odds of skipping address validation and reusing the information of the path, such as the estimated round-trip time or the bandwidth.</p>
+<p id="rfc.section.1.p.3">To resolve these issues, this document defines a QUIC transport parameter that expands the scope of the token from the server name to a union of the server name and the server&#8217;s address tuple.</p>
+<p id="rfc.section.1.p.4">When sending a token, a server would embed an identifier of the congestion controller associated to the connection.  Then, when accepting a new connection using the advertised token, the server associates the new connection to the existing congestion controller by using the identifier found in the provided token.  Once the server succeeds in associating the new connection to the existing congestion controller, it can skip address validation and slow-start phase for the new connection, as well as using the congestion controller for distributing bandwidth between the old and the new connection.</p>
+<p id="rfc.section.1.p.5">Even when there is no existing connection, sharing the tokens between different server names raises the chance of the server receiving a token that has not yet expired, thereby improving the odds of skipping address validation and reusing the information of the path, such as the estimated round-trip time or the bandwidth.</p>
 <h1 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a> <a href="#notational-conventions" id="notational-conventions">Notational Conventions</a></h1>
 <p id="rfc.section.1.1.p.1">The key words &#8220;MUST&#8221;, &#8220;MUST NOT&#8221;, &#8220;REQUIRED&#8221;, &#8220;SHALL&#8221;, &#8220;SHALL NOT&#8221;, &#8220;SHOULD&#8221;, &#8220;SHOULD NOT&#8221;, &#8220;RECOMMENDED&#8221;, &#8220;MAY&#8221;, and &#8220;OPTIONAL&#8221; in this document are to be interpreted as described in <a href="#RFC2119">[RFC2119]</a>.</p>
 <h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> <a href="#the-addressboundtoken-transport-parameter" id="the-addressboundtoken-transport-parameter">The address_bound_token Transport Parameter</a></h1>

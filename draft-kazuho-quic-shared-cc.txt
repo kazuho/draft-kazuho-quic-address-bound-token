@@ -4,8 +4,8 @@
 
 QUIC                                                              K. Oku
 Internet-Draft                                                    Fastly
-Intended status: Standards Track                          March 29, 2019
-Expires: September 30, 2019
+Intended status: Standards Track                          April 01, 2019
+Expires: October 3, 2019
 
 
                  Shared Congestion Controller for QUIC
@@ -32,7 +32,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on September 30, 2019.
+   This Internet-Draft will expire on October 3, 2019.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Oku                    Expires September 30, 2019               [Page 1]
+Oku                      Expires October 3, 2019                [Page 1]
 
-Internet-Draft    Shared Congestion Controller for QUIC       March 2019
+Internet-Draft    Shared Congestion Controller for QUIC       April 2019
 
 
 Table of Contents
@@ -64,7 +64,7 @@ Table of Contents
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
    2.  The address_bound_token Transport Parameter . . . . . . . . .   3
    3.  Sharing the Congestion Controller . . . . . . . . . . . . . .   3
-   4.  Security Considerations . . . . . . . . . . . . . . . . . . .   4
+   4.  Security Considerations . . . . . . . . . . . . . . . . . . .   3
      4.1.  Reflection Attack . . . . . . . . . . . . . . . . . . . .   4
      4.2.  Plaintext Tokens  . . . . . . . . . . . . . . . . . . . .   4
    5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   4
@@ -85,9 +85,9 @@ Table of Contents
    name, even when those server names are hosted by the same server.
    This restriction introduces several drawbacks:
 
-   o  Address validation is required for each connection establishment,
-      thereby restricting the amount of data that a server can initially
-      send.
+   o  Address validation is required for each connection establishment
+      specifying a different server name, thereby restricting the amount
+      of data that a server can initially send.
 
    o  Each connection would go through the slow-start phase, limiting
       the amount of data that can be sent by a server during the early
@@ -96,28 +96,24 @@ Table of Contents
    o  It is hard if not impossible to control the distribution of the
       bandwidth among the connections.
 
-   Tokens sent using NEW_TOKEN frames mitigate the first two concerns to
-   some extent, though the effectiveness depends on the probability of
-   clients reestablishing the connections using the same server name.
-
    To resolve these issues, this document defines a QUIC transport
    parameter that expands the scope of the token from the server name to
    a union of the server name and the server's address tuple.
 
    When sending a token, a server would embed an identifier of the
    congestion controller associated to the connection.  Then, when
-
-
-
-Oku                    Expires September 30, 2019               [Page 2]
-
-Internet-Draft    Shared Congestion Controller for QUIC       March 2019
-
-
    accepting a new connection using the advertised token, the server
    associates the new connection to the existing congestion controller
    by using the identifier found in the provided token.  Once the server
    succeeds in associating the new connection to the existing congestion
+
+
+
+Oku                      Expires October 3, 2019                [Page 2]
+
+Internet-Draft    Shared Congestion Controller for QUIC       April 2019
+
+
    controller, it can skip address validation and slow-start phase for
    the new connection, as well as using the congestion controller for
    distributing bandwidth between the old and the new connection.
@@ -160,17 +156,19 @@ Internet-Draft    Shared Congestion Controller for QUIC       March 2019
    receipts of acknowledgements and loss signals to the consolidated
    congestion controller.
 
-
-
-
-
-
-Oku                    Expires September 30, 2019               [Page 3]
-
-Internet-Draft    Shared Congestion Controller for QUIC       March 2019
-
-
 4.  Security Considerations
+
+
+
+
+
+
+
+
+Oku                      Expires October 3, 2019                [Page 3]
+
+Internet-Draft    Shared Congestion Controller for QUIC       April 2019
+
 
 4.1.  Reflection Attack
 
@@ -221,9 +219,11 @@ Internet-Draft    Shared Congestion Controller for QUIC       March 2019
 
 
 
-Oku                    Expires September 30, 2019               [Page 4]
+
+
+Oku                      Expires October 3, 2019                [Page 4]
 
-Internet-Draft    Shared Congestion Controller for QUIC       March 2019
+Internet-Draft    Shared Congestion Controller for QUIC       April 2019
 
 
    [RFC7838]  Nottingham, M., McManus, P., and J. Reschke, "HTTP
@@ -277,9 +277,9 @@ A.2.  Cross-connection Prioritization
 
 
 
-Oku                    Expires September 30, 2019               [Page 5]
+Oku                      Expires October 3, 2019                [Page 5]
 
-Internet-Draft    Shared Congestion Controller for QUIC       March 2019
+Internet-Draft    Shared Congestion Controller for QUIC       April 2019
 
 
    The PRIORITY frame is sent by an endpoint to encourage the receiver
@@ -333,4 +333,4 @@ Author's Address
 
 
 
-Oku                    Expires September 30, 2019               [Page 6]
+Oku                      Expires October 3, 2019                [Page 6]
