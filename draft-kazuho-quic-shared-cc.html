@@ -382,7 +382,7 @@ ul.toc li {
   </ul>
 
   <h1 id="rfc.section.1"><a href="#rfc.section.1">1.</a> <a href="#introduction" id="introduction">Introduction</a></h1>
-<p id="rfc.section.1.p.1">Some if not all of the application protocols that are built on top of QUIC <a href="#QUIC-TRANSPORT">[QUIC-TRANSPORT]</a>, including HTTP/3 <a href="#QUIC-HTTP">[QUIC-HTTP]</a>, require or would require clients to establish different connections for each server name, even when those server names are hosted by the same server.  This restriction introduces several drawbacks:</p>
+<p id="rfc.section.1.p.1">Some, if not all of the application protocols that are built on top of QUIC <a href="#QUIC-TRANSPORT">[QUIC-TRANSPORT]</a>, including HTTP/3 <a href="#QUIC-HTTP">[QUIC-HTTP]</a>, require or would require clients to establish different connections for each server name, even when those server names are hosted by the same server.  This restriction introduces several drawbacks:</p>
 <p/>
 
 <ul>
@@ -406,7 +406,7 @@ ul.toc li {
 <p id="rfc.section.4.1.p.1">An attacker can create a connection to obtain an address-bound token, warm up the connection, then initiate a new connection by using the token with a spoofed client address or port number.  If the server skips address validation and retains the congestion window as-is, the spoofed address might receive a fair amount of packet.</p>
 <p id="rfc.section.4.1.p.2">The impact of the attack is equivalent to the spoofed NAT rebinding attack.  A server SHOULD NOT skip path validation if the source IP address of an initiating connection is different from the address for which the address-bound token was issued.</p>
 <h1 id="rfc.section.4.2"><a href="#rfc.section.4.2">4.2.</a> <a href="#plaintext-tokens" id="plaintext-tokens">Plaintext Tokens</a></h1>
-<p id="rfc.section.4.2.p.1">A server MUST NOT issue an unbound token that includes the name of the original server or the identifier of the congestion controller in cleartext, because if visible on the wire, observers can use that information to correlate the ongoing connection establishment and the properties of the connection that previously existed.</p>
+<p id="rfc.section.4.2.p.1">An address-bound token MUST NOT expose linkability between connections, for example by including the identifier of the congestion controller in cleartext.  Exposing a value shared between multiple connections in the tokens would allow observers to identify the connections belonging to the same client.</p>
 <h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a></h1>
 <p id="rfc.section.5.p.1">TBD</p>
 <h1 id="rfc.references"><a href="#rfc.references">6.</a> References</h1>
