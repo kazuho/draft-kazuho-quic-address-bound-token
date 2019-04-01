@@ -61,7 +61,7 @@ same two endpoints.
 
 # Introduction
 
-Some if not all of the application protocols that are built on top of QUIC
+Some, if not all of the application protocols that are built on top of QUIC
 [QUIC-TRANSPORT], including HTTP/3 [QUIC-HTTP], require or would require
 clients to establish different connections for each server name, even when those
 server names are hosted by the same server.  This restriction introduces several
@@ -141,11 +141,10 @@ issued.
 
 ## Plaintext Tokens
 
-A server MUST NOT issue an unbound token that includes the name of the original
-server or the identifier of the congestion controller in cleartext, because if
-visible on the wire, observers can use that information to correlate the ongoing
-connection establishment and the properties of the connection that previously
-existed.
+An address-bound token MUST NOT expose linkability between connections, for
+example by including the identifier of the congestion controller in cleartext.
+Exposing a value shared between multiple connections in the tokens would allow
+observers to identify the connections belonging to the same client.
 
 # IANA Considerations
 
