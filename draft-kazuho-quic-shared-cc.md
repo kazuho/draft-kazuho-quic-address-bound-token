@@ -67,16 +67,13 @@ clients to establish different connections for each server name, even when those
 server names are hosted by the same server.  This restriction introduces several
 drawbacks:
 
-* Address validation is required for each connection establishment, thereby
-  restricting the amount of data that a server can initially send.
+* Address validation is required for each connection establishment specifying a
+  different server name, thereby restricting the amount of data that a server
+  can initially send.
 * Each connection would go through the slow-start phase, limiting the amount of
   data that can be sent by a server during the early stages of each connection.
 * It is hard if not impossible to control the distribution of the bandwidth
   among the connections.
-
-Tokens sent using NEW_TOKEN frames mitigate the first two concerns to some
-extent, though the effectiveness depends on the probability of clients
-reestablishing the connections using the same server name.
 
 To resolve these issues, this document defines a QUIC transport parameter that
 expands the scope of the token from the server name to a union of the server
