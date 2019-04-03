@@ -1,6 +1,6 @@
 ---
-title: Shared Congestion Controller for QUIC
-docname: draft-kazuho-quic-shared-cc-latest
+title: Address-bound Token for QUIC
+docname: draft-kazuho-quic-address-bound-token-latest
 category: std
 
 ipr: trust200902
@@ -53,9 +53,9 @@ informative:
 
 --- abstract
 
-This document describes a QUIC extension for sharing address validation and
-congestion controller state among multiple connections established between the
-same two endpoints.
+This document describes a QUIC extension for an address-bound token.  This token
+can be used for sharing address validation and congestion controller state
+between the same two endpoints across multiple connections and origins.
 
 --- middle
 
@@ -70,29 +70,15 @@ drawbacks:
 * Address validation is required for each connection establishment specifying a
   different server name, thereby restricting the amount of data that a server
   can initially send.
-* Each connection would go through the slow-start phase, limiting the amount of
-  data that can be sent by a server during the early stages of each connection.
-* It is hard if not impossible to control the distribution of the bandwidth
-  among the connections.
+* Distribution of network bandwidth among these connections is governed by
+  start-up and congestion control dynamics, which can lead to unfair
+  distribution for short-lived connections.
+* It is hard if not impossible to prioritize the transmission of some
+  connections among others.
 
 To resolve these issues, this document defines a QUIC transport parameter that
 expands the scope of the token from the server name to a union of the server
 name and the server's address tuple.
-
-When sending a token, a server would embed an identifier of the congestion
-controller associated to the connection.  Then, when accepting a new connection
-using the advertised token, the server associates the new connection to the
-existing congestion controller by using the identifier found in the provided
-token.  Once the server succeeds in associating the new connection to the
-existing congestion controller, it can skip address validation and slow-start
-phase for the new connection, as well as using the congestion controller for
-distributing bandwidth between the old and the new connection.
-
-Even when there is no existing connection, sharing the tokens between different
-server names raises the chance of the server receiving a token that has not yet
-expired, thereby improving the odds of skipping address validation and reusing
-the information of the path, such as the estimated round-trip time or the
-bandwidth.
 
 ## Notational Conventions
 
@@ -100,29 +86,57 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in [RFC2119].
 
+# Overview
+
+When accepting a new connection, a server sends the `address_bound_token`
+transport parameter indicating to the client that the tokens it would send can
+be used for establishing future connections against the server's address tuple
+regardless of the server's name, and sends the tokens using the NEW_TOKEN
+frames.
+
+A server can embed the identifier of the congestion controller tied to the
+connection within the tokens that it sends.  Then, when accepting a new
+connection using the advertised token, the server tries to associate the new
+connection to the existing congestion controller by using the identifier found
+in the provided token.  Once the server succeeds in making this association, it
+can skip address validation and the start-up phase for the new connection, as
+well as using the congestion controller for distributing the network bandwidth
+between the old and the new connection.
+
+Even when it is impossible to share a congestion controller among multiple
+connections, sharing the tokens between different server names raises the chance
+of the server receiving a token that has not yet expired.  That improves the
+odds of skipping address validation and reusing the information of the path,
+such as the estimated round-trip time or the network bandwidth.
+
 # The address_bound_token Transport Parameter
 
-A server sends the `address_bound_token` transport parameter (0xTBD) to
-indicate the client that the token it would send using the NEW_TOKEN frame can
-be used for future connections established against the same server name, or for
-those sharing the same server IP address and port number.
+A server sends the `address_bound_token` transport parameter (0xTBD) to indicate
+that tokens sent using the NEW_TOKEN frame are "address-bound tokens".  That is,
+they can be used by the client for future connections established to the same
+server name or to the same server IP address and port.
 
-Only the server sends the `address_bound_token` transport parameter.  The
-transport parameter does not carry a value; the length of the value MUST be set
-to zero.  An endpoint that receives the transport parameter not conforming to
-these requirements MUST terminate the connection with a PROTOCOL_VIOLATION
-error.
+Only the server sends the `address_bound_token` transport parameter.  A client
+MUST NOT send this transport parameter.  A server MUST treat receipt of a
+`address_bound_token` transport parameter as a connection error of type
+TRANSPORT_PARAMETER_ERROR.
+
+The `address_bound_token` transport parameter does not carry a value; the length
+of the value MUST be set to zero.  A client that receives this transport
+parameter not conforming to these requirements MUST terminate the connection
+with a TRANSPORT_PARAMETER_ERROR.
 
 # Sharing the Congestion Controller
 
-When multiple QUIC connections are associated to a single congestion controller,
-how the send window is distributed between the connections is up to the sender's
+When multiple QUIC connections share a single congestion controller, how the
+send window is distributed between the connections is up to the sender's
 discretion.
 
-However, acknowledgements MUST be sent out no later than as when the congestion
-controller is not consolidated.  The loss recovery logic SHOULD operate
-independently for each connection, while forwarding receipts of acknowledgements
-and loss signals to the consolidated congestion controller.
+However, the use of the `address_bound_token` transport parameter MUST NOT cause
+any change to when the acknowledgements are sent by a connection endpoint.
+Similarly, while connection endpoints will forward receipts of acknowledgements
+and loss signals to the shared congestion controller, loss recovery logic SHOULD
+operate independently for each connection.
 
 # Security Considerations
 
@@ -132,7 +146,7 @@ An attacker can create a connection to obtain an address-bound token, warm up
 the connection, then initiate a new connection by using the token with a
 spoofed client address or port number.  If the server skips address validation
 and retains the congestion window as-is, the spoofed address might receive a
-fair amount of packet.
+large amount of unsolicited data.
 
 The impact of the attack is equivalent to the spoofed NAT rebinding attack.  A
 server SHOULD NOT skip path validation if the source IP address of an initiating
@@ -143,8 +157,9 @@ issued.
 
 An address-bound token MUST NOT expose linkability between connections, for
 example by including the identifier of the congestion controller in cleartext.
-Exposing a value shared between multiple connections in the tokens would allow
-observers to identify the connections belonging to the same client.
+Exposing a value shared between multiple tokens that could be carried among
+different connections allows observers to identify the connections belonging to
+the same client.
 
 # IANA Considerations
 
