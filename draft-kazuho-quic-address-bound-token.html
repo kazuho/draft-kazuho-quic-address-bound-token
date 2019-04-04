@@ -389,7 +389,7 @@ ul.toc li {
 
 <ul>
   <li>Address validation is required for each connection establishment specifying a different server name, thereby restricting the amount of data that a server can initially send.</li>
-  <li>Distribution of network bandwidth among these connections is governed by startup phase and congestion control dynamics, which can lead to unfair distribution for short-lived connections.</li>
+  <li>Distribution of network bandwidth among these connections is governed by the startup phase and congestion control dynamics, which can lead to unfair distribution for short-lived connections.</li>
   <li>It is hard if not impossible to prioritize the transmission of some connections among others.</li>
 </ul>
 <p id="rfc.section.1.p.3">To resolve these issues, this document defines a QUIC transport parameter that expands the scope of the token from the server name to a union of the server name and the server&#8217;s address tuple.</p>

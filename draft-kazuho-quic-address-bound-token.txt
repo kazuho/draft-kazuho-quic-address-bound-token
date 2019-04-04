@@ -91,8 +91,8 @@ Table of Contents
       of data that a server can initially send.
 
    o  Distribution of network bandwidth among these connections is
-      governed by startup phase and congestion control dynamics, which
-      can lead to unfair distribution for short-lived connections.
+      governed by the startup phase and congestion control dynamics,
+      which can lead to unfair distribution for short-lived connections.
 
    o  It is hard if not impossible to prioritize the transmission of
       some connections among others.
