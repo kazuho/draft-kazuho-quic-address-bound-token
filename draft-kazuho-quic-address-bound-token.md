@@ -1,6 +1,6 @@
 ---
 title: Address-bound Token for QUIC
-docname: draft-kazuho-quic-address-bound-token-00
+docname: draft-kazuho-quic-address-bound-token-latest
 category: std
 
 ipr: trust200902
@@ -166,6 +166,12 @@ the same client.
 TBD
 
 --- back
+
+# Chaneg Log
+
+## Since draft-kazuho-quic-address-bound-token-00:
+
+- None yet.
 
 # Design Variations
 
