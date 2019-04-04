@@ -285,18 +285,20 @@ ul.toc li {
 <link href="#rfc.section.1.1" rel="Chapter" title="1.1 Notational Conventions"/>
 <link href="#rfc.section.2" rel="Chapter" title="2 Overview"/>
 <link href="#rfc.section.3" rel="Chapter" title="3 The address_bound_token Transport Parameter"/>
-<link href="#rfc.section.4" rel="Chapter" title="4 Sharing the Congestion Controller"/>
-<link href="#rfc.section.5" rel="Chapter" title="5 Security Considerations"/>
-<link href="#rfc.section.5.1" rel="Chapter" title="5.1 Reflection Attack"/>
-<link href="#rfc.section.5.2" rel="Chapter" title="5.2 Plaintext Tokens"/>
-<link href="#rfc.section.6" rel="Chapter" title="6 IANA Considerations"/>
-<link href="#rfc.references" rel="Chapter" title="7 References"/>
-<link href="#rfc.references.1" rel="Chapter" title="7.1 Normative References"/>
-<link href="#rfc.references.2" rel="Chapter" title="7.2 Informative References"/>
-<link href="#rfc.appendix.A" rel="Chapter" title="A Design Variations"/>
-<link href="#rfc.appendix.A.1" rel="Chapter" title="A.1 Using Alt-Svc Name as the Key"/>
-<link href="#rfc.appendix.A.2" rel="Chapter" title="A.2 Cross-connection Prioritization"/>
-<link href="#rfc.appendix.B" rel="Chapter" title="B Acknowledgements"/>
+<link href="#rfc.section.4" rel="Chapter" title="4 Security Considerations"/>
+<link href="#rfc.section.4.1" rel="Chapter" title="4.1 Reflection Attack"/>
+<link href="#rfc.section.4.2" rel="Chapter" title="4.2 Plaintext Tokens"/>
+<link href="#rfc.section.5" rel="Chapter" title="5 IANA Considerations"/>
+<link href="#rfc.references" rel="Chapter" title="6 References"/>
+<link href="#rfc.references.1" rel="Chapter" title="6.1 Normative References"/>
+<link href="#rfc.references.2" rel="Chapter" title="6.2 Informative References"/>
+<link href="#rfc.appendix.A" rel="Chapter" title="A Change Log"/>
+<link href="#rfc.appendix.A.1" rel="Chapter" title="A.1 Since draft-kazuho-quic-address-bound-token-00:"/>
+<link href="#rfc.appendix.B" rel="Chapter" title="B Considerations on Sharing the Congestion Controller"/>
+<link href="#rfc.appendix.C" rel="Chapter" title="C Design Variations"/>
+<link href="#rfc.appendix.C.1" rel="Chapter" title="C.1 Using Alt-Svc Name as the Key"/>
+<link href="#rfc.appendix.C.2" rel="Chapter" title="C.2 Cross-connection Prioritization"/>
+<link href="#rfc.appendix.D" rel="Chapter" title="D Acknowledgements"/>
 <link href="#rfc.authors" rel="Chapter"/>
 
 
@@ -366,18 +368,20 @@ ul.toc li {
 <ul><li>1.1.   <a href="#rfc.section.1.1">Notational Conventions</a></li>
 </ul><li>2.   <a href="#rfc.section.2">Overview</a></li>
 <li>3.   <a href="#rfc.section.3">The address_bound_token Transport Parameter</a></li>
-<li>4.   <a href="#rfc.section.4">Sharing the Congestion Controller</a></li>
-<li>5.   <a href="#rfc.section.5">Security Considerations</a></li>
-<ul><li>5.1.   <a href="#rfc.section.5.1">Reflection Attack</a></li>
-<li>5.2.   <a href="#rfc.section.5.2">Plaintext Tokens</a></li>
-</ul><li>6.   <a href="#rfc.section.6">IANA Considerations</a></li>
-<li>7.   <a href="#rfc.references">References</a></li>
-<ul><li>7.1.   <a href="#rfc.references.1">Normative References</a></li>
-<li>7.2.   <a href="#rfc.references.2">Informative References</a></li>
-</ul><li>Appendix A.   <a href="#rfc.appendix.A">Design Variations</a></li>
-<ul><li>A.1.   <a href="#rfc.appendix.A.1">Using Alt-Svc Name as the Key</a></li>
-<li>A.2.   <a href="#rfc.appendix.A.2">Cross-connection Prioritization</a></li>
-</ul><li>Appendix B.   <a href="#rfc.appendix.B">Acknowledgements</a></li>
+<li>4.   <a href="#rfc.section.4">Security Considerations</a></li>
+<ul><li>4.1.   <a href="#rfc.section.4.1">Reflection Attack</a></li>
+<li>4.2.   <a href="#rfc.section.4.2">Plaintext Tokens</a></li>
+</ul><li>5.   <a href="#rfc.section.5">IANA Considerations</a></li>
+<li>6.   <a href="#rfc.references">References</a></li>
+<ul><li>6.1.   <a href="#rfc.references.1">Normative References</a></li>
+<li>6.2.   <a href="#rfc.references.2">Informative References</a></li>
+</ul><li>Appendix A.   <a href="#rfc.appendix.A">Change Log</a></li>
+<ul><li>A.1.   <a href="#rfc.appendix.A.1">Since draft-kazuho-quic-address-bound-token-00:</a></li>
+</ul><li>Appendix B.   <a href="#rfc.appendix.B">Considerations on Sharing the Congestion Controller</a></li>
+<li>Appendix C.   <a href="#rfc.appendix.C">Design Variations</a></li>
+<ul><li>C.1.   <a href="#rfc.appendix.C.1">Using Alt-Svc Name as the Key</a></li>
+<li>C.2.   <a href="#rfc.appendix.C.2">Cross-connection Prioritization</a></li>
+</ul><li>Appendix D.   <a href="#rfc.appendix.D">Acknowledgements</a></li>
 <li><a href="#rfc.authors">Author's Address</a></li>
 
 
@@ -403,19 +407,16 @@ ul.toc li {
 <p id="rfc.section.3.p.1">A server sends the <samp>address_bound_token</samp> transport parameter (0xTBD) to indicate that tokens sent using the NEW_TOKEN frame are &#8220;address-bound tokens&#8221;.  That is, they can be used by the client for future connections established to the same server name or to the same server IP address and port.</p>
 <p id="rfc.section.3.p.2">Only the server sends the <samp>address_bound_token</samp> transport parameter.  A client MUST NOT send this transport parameter.  A server MUST treat receipt of a <samp>address_bound_token</samp> transport parameter as a connection error of type TRANSPORT_PARAMETER_ERROR.</p>
 <p id="rfc.section.3.p.3">The <samp>address_bound_token</samp> transport parameter does not carry a value; the length of the value MUST be set to zero.  A client that receives this transport parameter not conforming to these requirements MUST terminate the connection with a TRANSPORT_PARAMETER_ERROR.</p>
-<h1 id="rfc.section.4"><a href="#rfc.section.4">4.</a> <a href="#sharing-the-congestion-controller" id="sharing-the-congestion-controller">Sharing the Congestion Controller</a></h1>
-<p id="rfc.section.4.p.1">When multiple QUIC connections share a single congestion controller, how the send window is distributed between the connections is up to the sender&#8217;s discretion.</p>
-<p id="rfc.section.4.p.2">However, the use of the <samp>address_bound_token</samp> transport parameter MUST NOT cause any change to when the acknowledgements are sent by a connection endpoint.  Similarly, while connection endpoints will forward receipts of acknowledgements and loss signals to the shared congestion controller, loss recovery logic SHOULD operate independently for each connection.</p>
-<h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a></h1>
-<h1 id="rfc.section.5.1"><a href="#rfc.section.5.1">5.1.</a> <a href="#reflection-attack" id="reflection-attack">Reflection Attack</a></h1>
-<p id="rfc.section.5.1.p.1">An attacker can create a connection to obtain an address-bound token, warm up the connection, then initiate a new connection by using the token with a spoofed client address or port number.  If the server skips address validation and retains the congestion window as-is, the spoofed address might receive a large amount of unsolicited data.</p>
-<p id="rfc.section.5.1.p.2">The impact of the attack is equivalent to the spoofed NAT rebinding attack.  A server SHOULD NOT skip path validation if the source IP address of an initiating connection is different from the address for which the address-bound token was issued.</p>
-<h1 id="rfc.section.5.2"><a href="#rfc.section.5.2">5.2.</a> <a href="#plaintext-tokens" id="plaintext-tokens">Plaintext Tokens</a></h1>
-<p id="rfc.section.5.2.p.1">An address-bound token MUST NOT expose linkability between connections, for example by including the identifier of the congestion controller in cleartext.  Exposing a value shared between multiple tokens that could be carried among different connections allows observers to identify the connections belonging to the same client.</p>
-<h1 id="rfc.section.6"><a href="#rfc.section.6">6.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a></h1>
-<p id="rfc.section.6.p.1">TBD</p>
-<h1 id="rfc.references"><a href="#rfc.references">7.</a> References</h1>
-<h1 id="rfc.references.1"><a href="#rfc.references.1">7.1.</a> Normative References</h1>
+<h1 id="rfc.section.4"><a href="#rfc.section.4">4.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a></h1>
+<h1 id="rfc.section.4.1"><a href="#rfc.section.4.1">4.1.</a> <a href="#reflection-attack" id="reflection-attack">Reflection Attack</a></h1>
+<p id="rfc.section.4.1.p.1">An attacker can create a connection to obtain an address-bound token, warm up the connection, then initiate a new connection by using the token with a spoofed client address or port number.  If the server skips address validation and retains the congestion window as-is, the spoofed address might receive a large amount of unsolicited data.</p>
+<p id="rfc.section.4.1.p.2">The impact of the attack is equivalent to the spoofed NAT rebinding attack.  A server SHOULD NOT skip path validation if the source IP address of an initiating connection is different from the address for which the address-bound token was issued.</p>
+<h1 id="rfc.section.4.2"><a href="#rfc.section.4.2">4.2.</a> <a href="#plaintext-tokens" id="plaintext-tokens">Plaintext Tokens</a></h1>
+<p id="rfc.section.4.2.p.1">An address-bound token MUST NOT expose linkability between connections, for example by including the identifier of the congestion controller in cleartext.  Exposing a value shared between multiple tokens that could be carried among different connections allows observers to identify the connections belonging to the same client.</p>
+<h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a></h1>
+<p id="rfc.section.5.p.1">TBD</p>
+<h1 id="rfc.references"><a href="#rfc.references">6.</a> References</h1>
+<h1 id="rfc.references.1"><a href="#rfc.references.1">6.1.</a> Normative References</h1>
 <table>
   <tbody>
     <tr>
@@ -432,7 +433,7 @@ ul.toc li {
     </tr>
   </tbody>
 </table>
-<h1 id="rfc.references.2"><a href="#rfc.references.2">7.2.</a> Informative References</h1>
+<h1 id="rfc.references.2"><a href="#rfc.references.2">6.2.</a> Informative References</h1>
 <table>
   <tbody>
     <tr>
@@ -449,15 +450,26 @@ ul.toc li {
     </tr>
   </tbody>
 </table>
-<h1 id="rfc.appendix.A"><a href="#rfc.appendix.A">Appendix A.</a> <a href="#design-variations" id="design-variations">Design Variations</a></h1>
-<h1 id="rfc.appendix.A.1"><a href="#rfc.appendix.A.1">A.1.</a> <a href="#using-alt-svc-name-as-the-key" id="using-alt-svc-name-as-the-key">Using Alt-Svc Name as the Key</a></h1>
-<p id="rfc.section.A.1.p.1">An alternative approach to using the server&#8217;s address tuple as the scope of the token is to use the <samp>host</samp> value of the Alt-Svc <a href="#RFC7838">[RFC7838]</a> header field as the scope.</p>
-<p id="rfc.section.A.1.p.2">In such an approach, a server would send one host value for all the origins it hosts.  Then, a client using the value of the host as the scope of the tokens would be able to send a token received on any of the connections that went to the server on any of the future connections that goes to the server.</p>
-<p id="rfc.section.A.1.p.3">The downside of the approach is that the design works only for HTTP/3 connections being upgraded by the Alt-Svc header field.</p>
-<h1 id="rfc.appendix.A.2"><a href="#rfc.appendix.A.2">A.2.</a> <a href="#cross-connection-prioritization" id="cross-connection-prioritization">Cross-connection Prioritization</a></h1>
-<p id="rfc.section.A.2.p.1">A natural extension to the proposed scheme would be to define a way of prioritizing the connections, so that some connections can be given higher precedence than others.  As an example, it would be sensible to prioritize a connection carrying real-time video stream above a connection that is transferring an update image of an operating system.</p>
-<p id="rfc.section.A.2.p.2">A simple way of prioritizing between the connections would be to associate a priority value to every connection that would be respected by the sender when it distributes the bandwidth among the connections.</p>
-<p id="rfc.section.A.2.p.3">The PRIORITY frame (type=0xTBD) indicates the priority.</p>
+<h1 id="rfc.appendix.A"><a href="#rfc.appendix.A">Appendix A.</a> <a href="#change-log" id="change-log">Change Log</a></h1>
+<h1 id="rfc.appendix.A.1"><a href="#rfc.appendix.A.1">A.1.</a> <a href="#since-draft-kazuho-quic-address-bound-token-00" id="since-draft-kazuho-quic-address-bound-token-00">Since draft-kazuho-quic-address-bound-token-00:</a></h1>
+<p/>
+
+<ul>
+  <li>None yet.</li>
+</ul>
+<h1 id="rfc.appendix.B"><a href="#rfc.appendix.B">Appendix B.</a> <a href="#considerations-on-sharing-the-congestion-controller" id="considerations-on-sharing-the-congestion-controller">Considerations on Sharing the Congestion Controller</a></h1>
+<p id="rfc.section.B.p.1">When multiple QUIC connections share a single congestion controller, how the send window is distributed between the connections is up to the sender&#8217;s discretion.</p>
+<p id="rfc.section.B.p.2">However, acknowledgements for each connection need to be sent within the timeframes required by each connection.  This is because the peer is not expected to change its behavior in any way when the congestion controller is consolidated.  In fact, it is invisible to the peer if the consolidation occurred.</p>
+<p id="rfc.section.B.p.3">Similarly, because acknowledgements are reported by the peer for each connection individually, it is suggested that the loss recovery logic would operate independently for each connection, while forwarding receipts of acknowledgements and loss signals to the shared congestion controller.</p>
+<h1 id="rfc.appendix.C"><a href="#rfc.appendix.C">Appendix C.</a> <a href="#design-variations" id="design-variations">Design Variations</a></h1>
+<h1 id="rfc.appendix.C.1"><a href="#rfc.appendix.C.1">C.1.</a> <a href="#using-alt-svc-name-as-the-key" id="using-alt-svc-name-as-the-key">Using Alt-Svc Name as the Key</a></h1>
+<p id="rfc.section.C.1.p.1">An alternative approach to using the server&#8217;s address tuple as the scope of the token is to use the <samp>host</samp> value of the Alt-Svc <a href="#RFC7838">[RFC7838]</a> header field as the scope.</p>
+<p id="rfc.section.C.1.p.2">In such an approach, a server would send one host value for all the origins it hosts.  Then, a client using the value of the host as the scope of the tokens would be able to send a token received on any of the connections that went to the server on any of the future connections that goes to the server.</p>
+<p id="rfc.section.C.1.p.3">The downside of the approach is that the design works only for HTTP/3 connections being upgraded by the Alt-Svc header field.</p>
+<h1 id="rfc.appendix.C.2"><a href="#rfc.appendix.C.2">C.2.</a> <a href="#cross-connection-prioritization" id="cross-connection-prioritization">Cross-connection Prioritization</a></h1>
+<p id="rfc.section.C.2.p.1">A natural extension to the proposed scheme would be to define a way of prioritizing the connections, so that some connections can be given higher precedence than others.  As an example, it would be sensible to prioritize a connection carrying real-time video stream above a connection that is transferring an update image of an operating system.</p>
+<p id="rfc.section.C.2.p.2">A simple way of prioritizing between the connections would be to associate a priority value to every connection that would be respected by the sender when it distributes the bandwidth among the connections.</p>
+<p id="rfc.section.C.2.p.3">The PRIORITY frame (type=0xTBD) indicates the priority.</p>
 <pre>
  0
  0 1 2 3 4 5 6 7
@@ -465,13 +477,13 @@ ul.toc li {
 |  Priority (8) |
 +-+-+-+-+-+-+-+-+
 </pre>
-<p id="rfc.section.A.2.p.4">The Priority field carries the priority of the connection, subtracted by one.</p>
-<p id="rfc.section.A.2.p.5">Each connection is assigned a priority value between 1 and 256.  The initial priority is 16.</p>
-<p id="rfc.section.A.2.p.6">The PRIORITY frame is sent by an endpoint to encourage the receiver to assign bandwidth proportional to the suggested priority value for each connection.</p>
-<p id="rfc.section.A.2.p.7">The priority value carried by the PRIORITY frame is unidirectional.  A client advertises its preference on how the data sent by the server should be prioritized; a server advertises its preference on how the data sent by the client should be prioritized.</p>
-<h1 id="rfc.appendix.B"><a href="#rfc.appendix.B">Appendix B.</a> <a href="#acknowledgements" id="acknowledgements">Acknowledgements</a></h1>
-<p id="rfc.section.B.p.1">Thanks to Eric Kinnear, Ian Swett, Jana Iyengar, Martin Thomson, Lucas Pardue for their feedback and suggestions.</p>
-<p id="rfc.section.B.p.2">A proposal exists that advocates for having a transport parameter to change the scope of a token to a list of server names: <a href="https://svs.informatik.uni-hamburg.de/publications/2019/2019-03-22-Sy-preprint-Surfing-the-Web-quicker-than-QUIC-via-a-shared-Address-Validation.pdf">https://svs.informatik.uni-hamburg.de/publications/2019/2019-03-22-Sy-preprint-Surfing-the-Web-quicker-than-QUIC-via-a-shared-Address-Validation.pdf</a>.  The approach described in this document is different from that in the following aspects:</p>
+<p id="rfc.section.C.2.p.4">The Priority field carries the priority of the connection, subtracted by one.</p>
+<p id="rfc.section.C.2.p.5">Each connection is assigned a priority value between 1 and 256.  The initial priority is 16.</p>
+<p id="rfc.section.C.2.p.6">The PRIORITY frame is sent by an endpoint to encourage the receiver to assign bandwidth proportional to the suggested priority value for each connection.</p>
+<p id="rfc.section.C.2.p.7">The priority value carried by the PRIORITY frame is unidirectional.  A client advertises its preference on how the data sent by the server should be prioritized; a server advertises its preference on how the data sent by the client should be prioritized.</p>
+<h1 id="rfc.appendix.D"><a href="#rfc.appendix.D">Appendix D.</a> <a href="#acknowledgements" id="acknowledgements">Acknowledgements</a></h1>
+<p id="rfc.section.D.p.1">Thanks to Eric Kinnear, Ian Swett, Jana Iyengar, Martin Thomson, Lucas Pardue for their feedback and suggestions.</p>
+<p id="rfc.section.D.p.2">A proposal exists that advocates for having a transport parameter to change the scope of a token to a list of server names: <a href="https://svs.informatik.uni-hamburg.de/publications/2019/2019-03-22-Sy-preprint-Surfing-the-Web-quicker-than-QUIC-via-a-shared-Address-Validation.pdf">https://svs.informatik.uni-hamburg.de/publications/2019/2019-03-22-Sy-preprint-Surfing-the-Web-quicker-than-QUIC-via-a-shared-Address-Validation.pdf</a>.  The approach described in this document is different from that in the following aspects:</p>
 <p/>
 
 <ul>

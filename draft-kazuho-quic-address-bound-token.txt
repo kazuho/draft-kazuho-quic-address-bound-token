@@ -61,22 +61,24 @@ Internet-Draft        Address-bound Token for QUIC            April 2019
 Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
-     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   2
+     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
    2.  Overview  . . . . . . . . . . . . . . . . . . . . . . . . . .   3
    3.  The address_bound_token Transport Parameter . . . . . . . . .   3
-   4.  Sharing the Congestion Controller . . . . . . . . . . . . . .   3
-   5.  Security Considerations . . . . . . . . . . . . . . . . . . .   4
-     5.1.  Reflection Attack . . . . . . . . . . . . . . . . . . . .   4
-     5.2.  Plaintext Tokens  . . . . . . . . . . . . . . . . . . . .   4
-   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   4
-   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   4
-     7.1.  Normative References  . . . . . . . . . . . . . . . . . .   4
-     7.2.  Informative References  . . . . . . . . . . . . . . . . .   5
-   Appendix A.  Design Variations  . . . . . . . . . . . . . . . . .   5
-     A.1.  Using Alt-Svc Name as the Key . . . . . . . . . . . . . .   5
-     A.2.  Cross-connection Prioritization . . . . . . . . . . . . .   5
-   Appendix B.  Acknowledgements . . . . . . . . . . . . . . . . . .   6
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   6
+   4.  Security Considerations . . . . . . . . . . . . . . . . . . .   4
+     4.1.  Reflection Attack . . . . . . . . . . . . . . . . . . . .   4
+     4.2.  Plaintext Tokens  . . . . . . . . . . . . . . . . . . . .   4
+   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   4
+   6.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   4
+     6.1.  Normative References  . . . . . . . . . . . . . . . . . .   4
+     6.2.  Informative References  . . . . . . . . . . . . . . . . .   4
+   Appendix A.  Change Log . . . . . . . . . . . . . . . . . . . . .   5
+     A.1.  Since draft-kazuho-quic-address-bound-token-00: . . . . .   5
+   Appendix B.  Considerations on Sharing the Congestion Controller    5
+   Appendix C.  Design Variations  . . . . . . . . . . . . . . . . .   5
+     C.1.  Using Alt-Svc Name as the Key . . . . . . . . . . . . . .   5
+     C.2.  Cross-connection Prioritization . . . . . . . . . . . . .   6
+   Appendix D.  Acknowledgements . . . . . . . . . . . . . . . . . .   6
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   7
 
 1.  Introduction
 
@@ -101,11 +103,9 @@ Table of Contents
    parameter that expands the scope of the token from the server name to
    a union of the server name and the server's address tuple.
 
-1.1.  Notational Conventions
 
-   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
-   document are to be interpreted as described in [RFC2119].
+
+
 
 
 
@@ -113,6 +113,12 @@ Oku                      Expires October 6, 2019                [Page 2]
 
 Internet-Draft        Address-bound Token for QUIC            April 2019
 
+
+1.1.  Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in [RFC2119].
 
 2.  Overview
 
@@ -157,12 +163,6 @@ Internet-Draft        Address-bound Token for QUIC            April 2019
    this transport parameter not conforming to these requirements MUST
    terminate the connection with a TRANSPORT_PARAMETER_ERROR.
 
-4.  Sharing the Congestion Controller
-
-   When multiple QUIC connections share a single congestion controller,
-   how the send window is distributed between the connections is up to
-   the sender's discretion.
-
 
 
 Oku                      Expires October 6, 2019                [Page 3]
@@ -170,16 +170,9 @@ Oku                      Expires October 6, 2019                [Page 3]
 Internet-Draft        Address-bound Token for QUIC            April 2019
 
 
-   However, the use of the "address_bound_token" transport parameter
-   MUST NOT cause any change to when the acknowledgements are sent by a
-   connection endpoint.  Similarly, while connection endpoints will
-   forward receipts of acknowledgements and loss signals to the shared
-   congestion controller, loss recovery logic SHOULD operate
-   independently for each connection.
+4.  Security Considerations
 
-5.  Security Considerations
-
-5.1.  Reflection Attack
+4.1.  Reflection Attack
 
    An attacker can create a connection to obtain an address-bound token,
    warm up the connection, then initiate a new connection by using the
@@ -192,7 +185,7 @@ Internet-Draft        Address-bound Token for QUIC            April 2019
    address of an initiating connection is different from the address for
    which the address-bound token was issued.
 
-5.2.  Plaintext Tokens
+4.2.  Plaintext Tokens
 
    An address-bound token MUST NOT expose linkability between
    connections, for example by including the identifier of the
@@ -201,13 +194,13 @@ Internet-Draft        Address-bound Token for QUIC            April 2019
    allows observers to identify the connections belonging to the same
    client.
 
-6.  IANA Considerations
+5.  IANA Considerations
 
    TBD
 
-7.  References
+6.  References
 
-7.1.  Normative References
+6.1.  Normative References
 
    [QUIC-TRANSPORT]
               Iyengar, J., Ed. and M. Thomson, Ed., "QUIC: A UDP-Based
@@ -219,6 +212,13 @@ Internet-Draft        Address-bound Token for QUIC            April 2019
               DOI 10.17487/RFC2119, March 1997, <https://www.rfc-
               editor.org/info/rfc2119>.
 
+6.2.  Informative References
+
+   [QUIC-HTTP]
+              Bishop, M., Ed., "Hypertext Transfer Protocol Version 3
+              (HTTP/3)", draft-ietf-quic-http-16 (work in progress),
+              October 2018.
+
 
 
 Oku                      Expires October 6, 2019                [Page 4]
@@ -226,20 +226,37 @@ Oku                      Expires October 6, 2019                [Page 4]
 Internet-Draft        Address-bound Token for QUIC            April 2019
 
 
-7.2.  Informative References
-
-   [QUIC-HTTP]
-              Bishop, M., Ed., "Hypertext Transfer Protocol Version 3
-              (HTTP/3)", draft-ietf-quic-http-16 (work in progress),
-              October 2018.
-
    [RFC7838]  Nottingham, M., McManus, P., and J. Reschke, "HTTP
               Alternative Services", RFC 7838, DOI 10.17487/RFC7838,
               April 2016, <https://www.rfc-editor.org/info/rfc7838>.
 
-Appendix A.  Design Variations
+Appendix A.  Change Log
 
-A.1.  Using Alt-Svc Name as the Key
+A.1.  Since draft-kazuho-quic-address-bound-token-00:
+
+   o  None yet.
+
+Appendix B.  Considerations on Sharing the Congestion Controller
+
+   When multiple QUIC connections share a single congestion controller,
+   how the send window is distributed between the connections is up to
+   the sender's discretion.
+
+   However, acknowledgements for each connection need to be sent within
+   the timeframes required by each connection.  This is because the peer
+   is not expected to change its behavior in any way when the congestion
+   controller is consolidated.  In fact, it is invisible to the peer if
+   the consolidation occurred.
+
+   Similarly, because acknowledgements are reported by the peer for each
+   connection individually, it is suggested that the loss recovery logic
+   would operate independently for each connection, while forwarding
+   receipts of acknowledgements and loss signals to the shared
+   congestion controller.
+
+Appendix C.  Design Variations
+
+C.1.  Using Alt-Svc Name as the Key
 
    An alternative approach to using the server's address tuple as the
    scope of the token is to use the "host" value of the Alt-Svc
@@ -254,7 +271,18 @@ A.1.  Using Alt-Svc Name as the Key
    The downside of the approach is that the design works only for HTTP/3
    connections being upgraded by the Alt-Svc header field.
 
-A.2.  Cross-connection Prioritization
+
+
+
+
+
+
+Oku                      Expires October 6, 2019                [Page 5]
+
+Internet-Draft        Address-bound Token for QUIC            April 2019
+
+
+C.2.  Cross-connection Prioritization
 
    A natural extension to the proposed scheme would be to define a way
    of prioritizing the connections, so that some connections can be
@@ -269,18 +297,6 @@ A.2.  Cross-connection Prioritization
    connections.
 
    The PRIORITY frame (type=0xTBD) indicates the priority.
-
-
-
-
-
-
-
-
-Oku                      Expires October 6, 2019                [Page 5]
-
-Internet-Draft        Address-bound Token for QUIC            April 2019
-
 
     0
     0 1 2 3 4 5 6 7
@@ -303,7 +319,7 @@ Internet-Draft        Address-bound Token for QUIC            April 2019
    should be prioritized; a server advertises its preference on how the
    data sent by the client should be prioritized.
 
-Appendix B.  Acknowledgements
+Appendix D.  Acknowledgements
 
    Thanks to Eric Kinnear, Ian Swett, Jana Iyengar, Martin Thomson,
    Lucas Pardue for their feedback and suggestions.
@@ -314,6 +330,13 @@ Appendix B.  Acknowledgements
    Sy-preprint-Surfing-the-Web-quicker-than-QUIC-via-a-shared-Address-
    Validation.pdf .  The approach described in this document is
    different from that in the following aspects:
+
+
+
+Oku                      Expires October 6, 2019                [Page 6]
+
+Internet-Draft        Address-bound Token for QUIC            April 2019
+
 
    o  The scope of the token is the union of the server name and the
       server's address tuple.
@@ -333,4 +356,37 @@ Author's Address
 
 
 
-Oku                      Expires October 6, 2019                [Page 6]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Oku                      Expires October 6, 2019                [Page 7]
