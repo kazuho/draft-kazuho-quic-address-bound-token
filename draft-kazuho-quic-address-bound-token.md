@@ -167,7 +167,7 @@ TBD
 
 --- back
 
-# Chaneg Log
+# Change Log
 
 ## Since draft-kazuho-quic-address-bound-token-00:
 
