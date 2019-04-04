@@ -5,7 +5,7 @@
 <head profile="http://www.w3.org/2006/03/hcard http://dublincore.org/documents/2008/08/04/dc-html/">
   <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
 
-  <title>Shared Congestion Controller for QUIC</title>
+  <title>Address-bound Token for QUIC</title>
 
   
 <style type="text/css">/*<![CDATA[*/
@@ -283,15 +283,16 @@ ul.toc li {
   <link href="#rfc.toc" rel="Contents"/>
 <link href="#rfc.section.1" rel="Chapter" title="1 Introduction"/>
 <link href="#rfc.section.1.1" rel="Chapter" title="1.1 Notational Conventions"/>
-<link href="#rfc.section.2" rel="Chapter" title="2 The address_bound_token Transport Parameter"/>
-<link href="#rfc.section.3" rel="Chapter" title="3 Sharing the Congestion Controller"/>
-<link href="#rfc.section.4" rel="Chapter" title="4 Security Considerations"/>
-<link href="#rfc.section.4.1" rel="Chapter" title="4.1 Reflection Attack"/>
-<link href="#rfc.section.4.2" rel="Chapter" title="4.2 Plaintext Tokens"/>
-<link href="#rfc.section.5" rel="Chapter" title="5 IANA Considerations"/>
-<link href="#rfc.references" rel="Chapter" title="6 References"/>
-<link href="#rfc.references.1" rel="Chapter" title="6.1 Normative References"/>
-<link href="#rfc.references.2" rel="Chapter" title="6.2 Informative References"/>
+<link href="#rfc.section.2" rel="Chapter" title="2 Overview"/>
+<link href="#rfc.section.3" rel="Chapter" title="3 The address_bound_token Transport Parameter"/>
+<link href="#rfc.section.4" rel="Chapter" title="4 Sharing the Congestion Controller"/>
+<link href="#rfc.section.5" rel="Chapter" title="5 Security Considerations"/>
+<link href="#rfc.section.5.1" rel="Chapter" title="5.1 Reflection Attack"/>
+<link href="#rfc.section.5.2" rel="Chapter" title="5.2 Plaintext Tokens"/>
+<link href="#rfc.section.6" rel="Chapter" title="6 IANA Considerations"/>
+<link href="#rfc.references" rel="Chapter" title="7 References"/>
+<link href="#rfc.references.1" rel="Chapter" title="7.1 Normative References"/>
+<link href="#rfc.references.2" rel="Chapter" title="7.2 Informative References"/>
 <link href="#rfc.appendix.A" rel="Chapter" title="A Design Variations"/>
 <link href="#rfc.appendix.A.1" rel="Chapter" title="A.1 Using Alt-Svc Name as the Key"/>
 <link href="#rfc.appendix.A.2" rel="Chapter" title="A.2 Cross-connection Prioritization"/>
@@ -303,10 +304,10 @@ ul.toc li {
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
   <meta name="dct.creator" content="Oku, K." />
-  <meta name="dct.identifier" content="urn:ietf:id:draft-kazuho-quic-shared-cc-latest" />
-  <meta name="dct.issued" scheme="ISO8601" content="2019-4-01" />
-  <meta name="dct.abstract" content="This document describes a QUIC extension for sharing address validation and congestion controller state among multiple connections established between the same two endpoints." />
-  <meta name="description" content="This document describes a QUIC extension for sharing address validation and congestion controller state among multiple connections established between the same two endpoints." />
+  <meta name="dct.identifier" content="urn:ietf:id:draft-kazuho-quic-address-bound-token-latest" />
+  <meta name="dct.issued" scheme="ISO8601" content="2019-4-04" />
+  <meta name="dct.abstract" content="This document describes a QUIC extension for an address-bound token.  This token can be used for sharing address validation and congestion controller state between the same two endpoints across multiple connections and origins." />
+  <meta name="description" content="This document describes a QUIC extension for an address-bound token.  This token can be used for sharing address validation and congestion controller state between the same two endpoints across multiple connections and origins." />
 
 </head>
 
@@ -325,10 +326,10 @@ ul.toc li {
 </tr>
 <tr>
   <td class="left">Intended status: Standards Track</td>
-  <td class="right">April 01, 2019</td>
+  <td class="right">April 04, 2019</td>
 </tr>
 <tr>
-  <td class="left">Expires: October 3, 2019</td>
+  <td class="left">Expires: October 6, 2019</td>
   <td class="right"></td>
 </tr>
 
@@ -336,20 +337,20 @@ ul.toc li {
     </tbody>
   </table>
 
-  <p class="title">Shared Congestion Controller for QUIC<br />
-  <span class="filename">draft-kazuho-quic-shared-cc-latest</span></p>
+  <p class="title">Address-bound Token for QUIC<br />
+  <span class="filename">draft-kazuho-quic-address-bound-token-latest</span></p>
   
   <h1 id="rfc.abstract">
   <a href="#rfc.abstract">Abstract</a>
 </h1>
-<p>This document describes a QUIC extension for sharing address validation and congestion controller state among multiple connections established between the same two endpoints.</p>
+<p>This document describes a QUIC extension for an address-bound token.  This token can be used for sharing address validation and congestion controller state between the same two endpoints across multiple connections and origins.</p>
 <h1 id="rfc.status">
   <a href="#rfc.status">Status of This Memo</a>
 </h1>
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on October 3, 2019.</p>
+<p>This Internet-Draft will expire on October 6, 2019.</p>
 <h1 id="rfc.copyrightnotice">
   <a href="#rfc.copyrightnotice">Copyright Notice</a>
 </h1>
@@ -363,15 +364,16 @@ ul.toc li {
 
   	<li>1.   <a href="#rfc.section.1">Introduction</a></li>
 <ul><li>1.1.   <a href="#rfc.section.1.1">Notational Conventions</a></li>
-</ul><li>2.   <a href="#rfc.section.2">The address_bound_token Transport Parameter</a></li>
-<li>3.   <a href="#rfc.section.3">Sharing the Congestion Controller</a></li>
-<li>4.   <a href="#rfc.section.4">Security Considerations</a></li>
-<ul><li>4.1.   <a href="#rfc.section.4.1">Reflection Attack</a></li>
-<li>4.2.   <a href="#rfc.section.4.2">Plaintext Tokens</a></li>
-</ul><li>5.   <a href="#rfc.section.5">IANA Considerations</a></li>
-<li>6.   <a href="#rfc.references">References</a></li>
-<ul><li>6.1.   <a href="#rfc.references.1">Normative References</a></li>
-<li>6.2.   <a href="#rfc.references.2">Informative References</a></li>
+</ul><li>2.   <a href="#rfc.section.2">Overview</a></li>
+<li>3.   <a href="#rfc.section.3">The address_bound_token Transport Parameter</a></li>
+<li>4.   <a href="#rfc.section.4">Sharing the Congestion Controller</a></li>
+<li>5.   <a href="#rfc.section.5">Security Considerations</a></li>
+<ul><li>5.1.   <a href="#rfc.section.5.1">Reflection Attack</a></li>
+<li>5.2.   <a href="#rfc.section.5.2">Plaintext Tokens</a></li>
+</ul><li>6.   <a href="#rfc.section.6">IANA Considerations</a></li>
+<li>7.   <a href="#rfc.references">References</a></li>
+<ul><li>7.1.   <a href="#rfc.references.1">Normative References</a></li>
+<li>7.2.   <a href="#rfc.references.2">Informative References</a></li>
 </ul><li>Appendix A.   <a href="#rfc.appendix.A">Design Variations</a></li>
 <ul><li>A.1.   <a href="#rfc.appendix.A.1">Using Alt-Svc Name as the Key</a></li>
 <li>A.2.   <a href="#rfc.appendix.A.2">Cross-connection Prioritization</a></li>
@@ -387,30 +389,33 @@ ul.toc li {
 
 <ul>
   <li>Address validation is required for each connection establishment specifying a different server name, thereby restricting the amount of data that a server can initially send.</li>
-  <li>Each connection would go through the slow-start phase, limiting the amount of data that can be sent by a server during the early stages of each connection.</li>
-  <li>It is hard if not impossible to control the distribution of the bandwidth among the connections.</li>
+  <li>Distribution of network bandwidth among these connections is governed by start-up and congestion control dynamics, which can lead to unfair distribution for short-lived connections.</li>
+  <li>It is hard if not impossible to prioritize the transmission of some connections among others.</li>
 </ul>
 <p id="rfc.section.1.p.3">To resolve these issues, this document defines a QUIC transport parameter that expands the scope of the token from the server name to a union of the server name and the server&#8217;s address tuple.</p>
-<p id="rfc.section.1.p.4">When sending a token, a server would embed an identifier of the congestion controller associated to the connection.  Then, when accepting a new connection using the advertised token, the server associates the new connection to the existing congestion controller by using the identifier found in the provided token.  Once the server succeeds in associating the new connection to the existing congestion controller, it can skip address validation and slow-start phase for the new connection, as well as using the congestion controller for distributing bandwidth between the old and the new connection.</p>
-<p id="rfc.section.1.p.5">Even when there is no existing connection, sharing the tokens between different server names raises the chance of the server receiving a token that has not yet expired, thereby improving the odds of skipping address validation and reusing the information of the path, such as the estimated round-trip time or the bandwidth.</p>
 <h1 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a> <a href="#notational-conventions" id="notational-conventions">Notational Conventions</a></h1>
 <p id="rfc.section.1.1.p.1">The key words &#8220;MUST&#8221;, &#8220;MUST NOT&#8221;, &#8220;REQUIRED&#8221;, &#8220;SHALL&#8221;, &#8220;SHALL NOT&#8221;, &#8220;SHOULD&#8221;, &#8220;SHOULD NOT&#8221;, &#8220;RECOMMENDED&#8221;, &#8220;MAY&#8221;, and &#8220;OPTIONAL&#8221; in this document are to be interpreted as described in <a href="#RFC2119">[RFC2119]</a>.</p>
-<h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> <a href="#the-addressboundtoken-transport-parameter" id="the-addressboundtoken-transport-parameter">The address_bound_token Transport Parameter</a></h1>
-<p id="rfc.section.2.p.1">A server sends the <samp>address_bound_token</samp> transport parameter (0xTBD) to indicate the client that the token it would send using the NEW_TOKEN frame can be used for future connections established against the same server name, or for those sharing the same server IP address and port number.</p>
-<p id="rfc.section.2.p.2">Only the server sends the <samp>address_bound_token</samp> transport parameter.  The transport parameter does not carry a value; the length of the value MUST be set to zero.  An endpoint that receives the transport parameter not conforming to these requirements MUST terminate the connection with a PROTOCOL_VIOLATION error.</p>
-<h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a> <a href="#sharing-the-congestion-controller" id="sharing-the-congestion-controller">Sharing the Congestion Controller</a></h1>
-<p id="rfc.section.3.p.1">When multiple QUIC connections are associated to a single congestion controller, how the send window is distributed between the connections is up to the sender&#8217;s discretion.</p>
-<p id="rfc.section.3.p.2">However, acknowledgements MUST be sent out no later than as when the congestion controller is not consolidated.  The loss recovery logic SHOULD operate independently for each connection, while forwarding receipts of acknowledgements and loss signals to the consolidated congestion controller.</p>
-<h1 id="rfc.section.4"><a href="#rfc.section.4">4.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a></h1>
-<h1 id="rfc.section.4.1"><a href="#rfc.section.4.1">4.1.</a> <a href="#reflection-attack" id="reflection-attack">Reflection Attack</a></h1>
-<p id="rfc.section.4.1.p.1">An attacker can create a connection to obtain an address-bound token, warm up the connection, then initiate a new connection by using the token with a spoofed client address or port number.  If the server skips address validation and retains the congestion window as-is, the spoofed address might receive a fair amount of packet.</p>
-<p id="rfc.section.4.1.p.2">The impact of the attack is equivalent to the spoofed NAT rebinding attack.  A server SHOULD NOT skip path validation if the source IP address of an initiating connection is different from the address for which the address-bound token was issued.</p>
-<h1 id="rfc.section.4.2"><a href="#rfc.section.4.2">4.2.</a> <a href="#plaintext-tokens" id="plaintext-tokens">Plaintext Tokens</a></h1>
-<p id="rfc.section.4.2.p.1">An address-bound token MUST NOT expose linkability between connections, for example by including the identifier of the congestion controller in cleartext.  Exposing a value shared between multiple connections in the tokens would allow observers to identify the connections belonging to the same client.</p>
-<h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a></h1>
-<p id="rfc.section.5.p.1">TBD</p>
-<h1 id="rfc.references"><a href="#rfc.references">6.</a> References</h1>
-<h1 id="rfc.references.1"><a href="#rfc.references.1">6.1.</a> Normative References</h1>
+<h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> <a href="#overview" id="overview">Overview</a></h1>
+<p id="rfc.section.2.p.1">When accepting a new connection, a server sends the <samp>address_bound_token</samp> transport parameter indicating to the client that the tokens it would send can be used for establishing future connections against the server&#8217;s address tuple regardless of the server&#8217;s name, and sends the tokens using the NEW_TOKEN frames.</p>
+<p id="rfc.section.2.p.2">A server can embed the identifier of the congestion controller tied to the connection within the tokens that it sends.  Then, when accepting a new connection using the advertised token, the server tries to associate the new connection to the existing congestion controller by using the identifier found in the provided token.  Once the server succeeds in making this association, it can skip address validation and the start-up phase for the new connection, as well as using the congestion controller for distributing the network bandwidth between the old and the new connection.</p>
+<p id="rfc.section.2.p.3">Even when it is impossible to share a congestion controller among multiple connections, sharing the tokens between different server names raises the chance of the server receiving a token that has not yet expired.  That improves the odds of skipping address validation and reusing the information of the path, such as the estimated round-trip time or the network bandwidth.</p>
+<h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a> <a href="#the-addressboundtoken-transport-parameter" id="the-addressboundtoken-transport-parameter">The address_bound_token Transport Parameter</a></h1>
+<p id="rfc.section.3.p.1">A server sends the <samp>address_bound_token</samp> transport parameter (0xTBD) to indicate that tokens sent using the NEW_TOKEN frame are &#8220;address-bound tokens&#8221;.  That is, they can be used by the client for future connections established to the same server name or to the same server IP address and port.</p>
+<p id="rfc.section.3.p.2">Only the server sends the <samp>address_bound_token</samp> transport parameter.  A client MUST NOT send this transport parameter.  A server MUST treat receipt of a <samp>address_bound_token</samp> transport parameter as a connection error of type TRANSPORT_PARAMETER_ERROR.</p>
+<p id="rfc.section.3.p.3">The <samp>address_bound_token</samp> transport parameter does not carry a value; the length of the value MUST be set to zero.  A client that receives this transport parameter not conforming to these requirements MUST terminate the connection with a TRANSPORT_PARAMETER_ERROR.</p>
+<h1 id="rfc.section.4"><a href="#rfc.section.4">4.</a> <a href="#sharing-the-congestion-controller" id="sharing-the-congestion-controller">Sharing the Congestion Controller</a></h1>
+<p id="rfc.section.4.p.1">When multiple QUIC connections share a single congestion controller, how the send window is distributed between the connections is up to the sender&#8217;s discretion.</p>
+<p id="rfc.section.4.p.2">However, the use of the <samp>address_bound_token</samp> transport parameter MUST NOT cause any change to when the acknowledgements are sent by a connection endpoint.  Similarly, while connection endpoints will forward receipts of acknowledgements and loss signals to the shared congestion controller, loss recovery logic SHOULD operate independently for each connection.</p>
+<h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a></h1>
+<h1 id="rfc.section.5.1"><a href="#rfc.section.5.1">5.1.</a> <a href="#reflection-attack" id="reflection-attack">Reflection Attack</a></h1>
+<p id="rfc.section.5.1.p.1">An attacker can create a connection to obtain an address-bound token, warm up the connection, then initiate a new connection by using the token with a spoofed client address or port number.  If the server skips address validation and retains the congestion window as-is, the spoofed address might receive a large amount of unsolicited data.</p>
+<p id="rfc.section.5.1.p.2">The impact of the attack is equivalent to the spoofed NAT rebinding attack.  A server SHOULD NOT skip path validation if the source IP address of an initiating connection is different from the address for which the address-bound token was issued.</p>
+<h1 id="rfc.section.5.2"><a href="#rfc.section.5.2">5.2.</a> <a href="#plaintext-tokens" id="plaintext-tokens">Plaintext Tokens</a></h1>
+<p id="rfc.section.5.2.p.1">An address-bound token MUST NOT expose linkability between connections, for example by including the identifier of the congestion controller in cleartext.  Exposing a value shared between multiple tokens that could be carried among different connections allows observers to identify the connections belonging to the same client.</p>
+<h1 id="rfc.section.6"><a href="#rfc.section.6">6.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a></h1>
+<p id="rfc.section.6.p.1">TBD</p>
+<h1 id="rfc.references"><a href="#rfc.references">7.</a> References</h1>
+<h1 id="rfc.references.1"><a href="#rfc.references.1">7.1.</a> Normative References</h1>
 <table>
   <tbody>
     <tr>
@@ -427,7 +432,7 @@ ul.toc li {
     </tr>
   </tbody>
 </table>
-<h1 id="rfc.references.2"><a href="#rfc.references.2">6.2.</a> Informative References</h1>
+<h1 id="rfc.references.2"><a href="#rfc.references.2">7.2.</a> Informative References</h1>
 <table>
   <tbody>
     <tr>
