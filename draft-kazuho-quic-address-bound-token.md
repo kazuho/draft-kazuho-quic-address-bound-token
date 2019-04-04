@@ -70,8 +70,8 @@ drawbacks:
 * Address validation is required for each connection establishment specifying a
   different server name, thereby restricting the amount of data that a server
   can initially send.
-* Distribution of network bandwidth among these connections is governed by
-  start-up and congestion control dynamics, which can lead to unfair
+* Distribution of network bandwidth among these connections is governed by the
+  startup phase and congestion control dynamics, which can lead to unfair
   distribution for short-lived connections.
 * It is hard if not impossible to prioritize the transmission of some
   connections among others.
@@ -99,7 +99,7 @@ connection within the tokens that it sends.  Then, when accepting a new
 connection using the advertised token, the server tries to associate the new
 connection to the existing congestion controller by using the identifier found
 in the provided token.  Once the server succeeds in making this association, it
-can skip address validation and the start-up phase for the new connection, as
+can skip address validation and the startup phase for the new connection, as
 well as using the congestion controller for distributing the network bandwidth
 between the old and the new connection.
 
