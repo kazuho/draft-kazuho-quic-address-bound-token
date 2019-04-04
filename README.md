@@ -1,10 +1,10 @@
-# Shared Congestion Controller for QUIC
+# Address-bound Token for QUIC
 
-This is the working area for the individual Internet-Draft, "Shared Congestion Controller for QUIC".
+This is the working area for the individual Internet-Draft, "Address-bound Token for QUIC".
 
-* [Editor's Copy](https://kazuho.github.io/draft-kazuho-quic-shared-cc/#go.draft-kazuho-quic-shared-cc.html)
-* [Individual Draft](https://tools.ietf.org/html/draft-kazuho-quic-shared-cc)
-* [Compare Editor's Copy to Individual Draft](https://kazuho.github.io/draft-kazuho-quic-shared-cc/#go.draft-kazuho-quic-shared-cc.diff)
+* [Editor's Copy](https://kazuho.github.io/draft-kazuho-quic-address-bound-token/#go.draft-kazuho-quic-address-bound-token.html)
+* [Individual Draft](https://tools.ietf.org/html/draft-kazuho-quic-address-bound-token)
+* [Compare Editor's Copy to Individual Draft](https://kazuho.github.io/draft-kazuho-quic-address-bound-token/#go.draft-kazuho-quic-address-bound-token.diff)
 
 ## Building the Draft
 
@@ -21,4 +21,4 @@ This requires that you have the necessary software installed.  See
 ## Contributing
 
 See the
-[guidelines for contributions](https://github.com/kazuho/draft-kazuho-quic-shared-cc/blob/master/CONTRIBUTING.md).
+[guidelines for contributions](https://github.com/kazuho/draft-kazuho-quic-address-bound-token/blob/master/CONTRIBUTING.md).
