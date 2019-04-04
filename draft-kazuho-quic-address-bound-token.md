@@ -1,6 +1,6 @@
 ---
 title: Address-bound Token for QUIC
-docname: draft-kazuho-quic-address-bound-token-latest
+docname: draft-kazuho-quic-address-bound-token-00
 category: std
 
 ipr: trust200902
