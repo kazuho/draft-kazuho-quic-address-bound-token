@@ -220,8 +220,8 @@ client should be prioritized.
 
 # Acknowledgements
 
-Thanks to Eric Kinnear, Ian Swett, Jana Iyengar, Martin Thomson, Lucas Pardue,
-Ian Swett for their feedback and suggestions.
+Thanks to Eric Kinnear, Ian Swett, Jana Iyengar, Martin Thomson, Lucas Pardue
+for their feedback and suggestions.
 
 A proposal exists that advocates for having a transport parameter to change the
 scope of a token to a list of server names: <https://svs.informatik.uni-hamburg.de/publications/2019/2019-03-22-Sy-preprint-Surfing-the-Web-quicker-than-QUIC-via-a-shared-Address-Validation.pdf>.
