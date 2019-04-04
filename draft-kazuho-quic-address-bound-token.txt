@@ -306,7 +306,7 @@ Internet-Draft        Address-bound Token for QUIC            April 2019
 Appendix B.  Acknowledgements
 
    Thanks to Eric Kinnear, Ian Swett, Jana Iyengar, Martin Thomson,
-   Lucas Pardue, Ian Swett for their feedback and suggestions.
+   Lucas Pardue for their feedback and suggestions.
 
    A proposal exists that advocates for having a transport parameter to
    change the scope of a token to a list of server names:
