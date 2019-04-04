@@ -174,9 +174,9 @@ consolidated.  In fact, it is invisible to the peer if the consolidation
 occurred.
 
 Similarly, because acknowledgements are reported by the peer for each connection
-individually, it is suggested that the loss recovery logic would operate
-independently for each connection, while forwarding receipts of acknowledgements
-and loss signals to the shared congestion controller.
+individually, it is suggested that the loss recovery logic operate independently
+for each connection, while forwarding receipts of acknowledgements and loss
+signals to the shared congestion controller.
 
 # Design Variations
 
