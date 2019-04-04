@@ -126,18 +126,6 @@ of the value MUST be set to zero.  A client that receives this transport
 parameter not conforming to these requirements MUST terminate the connection
 with a TRANSPORT_PARAMETER_ERROR.
 
-# Sharing the Congestion Controller
-
-When multiple QUIC connections share a single congestion controller, how the
-send window is distributed between the connections is up to the sender's
-discretion.
-
-However, the use of the `address_bound_token` transport parameter MUST NOT cause
-any change to when the acknowledgements are sent by a connection endpoint.
-Similarly, while connection endpoints will forward receipts of acknowledgements
-and loss signals to the shared congestion controller, loss recovery logic SHOULD
-operate independently for each connection.
-
 # Security Considerations
 
 ## Reflection Attack
@@ -172,6 +160,23 @@ TBD
 ## Since draft-kazuho-quic-address-bound-token-00:
 
 - None yet.
+
+# Considerations on Sharing the Congestion Controller
+
+When multiple QUIC connections share a single congestion controller, how the
+send window is distributed between the connections is up to the sender's
+discretion.
+
+However, acknowledgements for each connection need to be sent within the
+timeframes required by each connection.  This is because the peer is not
+expected to change its behavior in any way when the congestion controller is
+consolidated.  In fact, it is invisible to the peer if the consolidation
+occurred.
+
+Similarly, because acknowledgements are reported by the peer for each connection
+individually, it is suggested that the loss recovery logic would operate
+independently for each connection, while forwarding receipts of acknowledgements
+and loss signals to the shared congestion controller.
 
 # Design Variations
 
